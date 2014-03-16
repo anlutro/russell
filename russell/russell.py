@@ -129,10 +129,13 @@ class Russell():
 	def generate(self):
 		self.backup()
 		print('Generating...')
+		print('Copying assets...')
 		for f in self.get_asset_files():
 			self.copy_asset(f)
+		print('Creating pages...')
 		for f in self.get_page_files():
 			self.convert_page(f)
+		print('Creating posts...')
 		for f in self.get_post_files():
 			self.convert_post(f)
 
@@ -213,7 +216,6 @@ class Russell():
 		trg_dir = os.path.join(self.trg_dir, 'assets')
 		if not os.path.isdir(trg_dir):
 			os.makedirs(trg_dir)
-		print('Copying assets into', trg_dir)
 		shutil.copy2(path, trg_dir)
 
 def main():
