@@ -8,7 +8,7 @@ A static blog HTML generator for Python 3.
 
 ## Usage
 
-`russell setup` will set up a directory structure for blogging with Russel in the current working directory. This will create the 'assets', 'backups', 'pages', 'posts', 'templates' directories, and create the required templates.
+`russell setup` will set up a directory structure for blogging with Russell in the current working directory. This will create the 'assets', 'backups', 'pages', 'posts', 'templates' directories, and create the required templates.
 
 ### Templating
 
