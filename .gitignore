@@ -1,3 +1,4 @@
+dist
 virtualenv
 MANIFEST
 *.egg-info
