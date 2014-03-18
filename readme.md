@@ -8,7 +8,7 @@ A static blog HTML generator for Python 3.
 
 ## Usage
 
-`russell setup` will set up a directory structure for blogging with Russel in the current working directory. This will create the 'assets', 'backups', 'pages', 'posts', 'templates' directories, and create the required templates.
+`russell setup` will set up a directory structure for blogging with Russell in the current working directory. This will create the 'assets', 'backups', 'pages', 'posts', 'templates' directories, and create the required templates.
 
 ### Templating
 
@@ -17,6 +17,10 @@ Jinja2 is used as a templating engine, and all its features are present.
 `root_url` has been added as a global variable, which you can use for generating urls in your template.
 
 You may create your own layout.html template and then extend that via `{% extends 'layout.html' %}`.
+
+The home.html and archive.html templates have the `posts` variable available, post.html has the `post` variable and page.html has the `page` variable. `posts` is an array of Entry objects, the others are a single instance of an Entry.
+
+An Entry object has the following properties: title, body, excerpt, slug and pubdate (datetime.datetime).
 
 ### Creating pages/posts
 
