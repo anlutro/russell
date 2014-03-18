@@ -18,6 +18,10 @@ Jinja2 is used as a templating engine, and all its features are present.
 
 You may create your own layout.html template and then extend that via `{% extends 'layout.html' %}`.
 
+The home.html and archive.html templates have the `posts` variable available, post.html has the `post` variable and page.html has the `page` variable. `posts` is an array of Entry objects, the others are a single instance of an Entry.
+
+An Entry object has the following properties: title, body, excerpt, slug and pubdate (datetime.datetime).
+
 ### Creating pages/posts
 
 `russell new page "My Test Page"` will create the file 'pages/my-test-page.md', which you can then open in your favourite text editor. The process is the same for `russell new post`. You can change the filename yourself to modify what the resulting .html file will be named.
