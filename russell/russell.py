@@ -4,9 +4,10 @@
 Russell - A static blog HTML generator
 
 Usage:
-  russell.py generate [src] [target] [--url=<url>]
-  russell.py setup [src]
-  russell.py new (page|post) <title>
+  russell generate [src] [target] [--url=<url>]
+  russell setup [src]
+  russell new page <title>
+  russell new post <title> [--pubdate=<datetime>]
 
 Arguments:
   src     The source directory where assets, pages, posts and templates
@@ -23,6 +24,7 @@ Options:
 import os, shutil, tarfile
 from datetime import datetime
 
+import dateutil.parser
 from docopt import docopt
 from jinja2 import Environment, FileSystemLoader
 from markdown import markdown
@@ -58,10 +60,23 @@ class Entry():
 			# The first line will be the title of the post.
 			title = f.readline().replace('#', '').strip()
 			# The remaining contents will be the body.
-			body = markdown(f.read().strip())
+			body = f.read().strip()
 
-		# The time the file was created will be the pubdate.
-		pubdate = datetime.fromtimestamp(os.path.getctime(path))
+		firstline = body.split('\n')[0]
+		if firstline[:8].lower() == 'pubdate:':
+			try:
+				pubdate = datetime.strptime(firstline[9:], '%Y-%m-%d %H:%M:%S')
+				body = '\n'.join(body.split('\n')[1:]).strip()
+			except ValueError:
+				print('Could not parse datetime from article:', firstline)
+				print('Pubdate must be in format Y-m-d H:M:S')
+				return
+		else:
+			# The time the file was created will be the pubdate.
+			pubdate = datetime.fromtimestamp(os.path.getctime(path))
+
+		body = markdown(body)
+
 		# The slug will be the name of the file.
 		slug = os.path.splitext(os.path.basename(path))[0]
 		return cls(title=title, body=body, pubdate=pubdate, slug=slug)
@@ -115,15 +130,26 @@ class Russell():
 			f.write('# ' + title + '\n\nWrite your page contents here!')
 		print('Done!')
 
-	def new_post(self, title):
+	def new_post(self, title, timestr=None):
 		slug = slugify(title)
 		path = os.path.join(self.src_dir, 'posts', slug + '.md')
+
 		if os.path.exists(path):
-			print('File already exists in',path,'- aborting!')
+			print('File already exists in', path, '- aborting!')
 			return
-		print('Creating new post in',path)
+
+		if timestr:
+			try:
+				dt = dateutil.parser.parse(timestr)
+			except TypeError:
+				print('Could not parse datetime', timestr)
+				return
+	
+		print('Creating new post in', path)
 		with open(path, 'w+') as f:
-			f.write('# ' + title + '\n\nWrite your post contents here!')		
+			f.write('# ' + title + '\n')
+			if dt: f.write('pubdate: ' + dt.strftime('%Y-%m-%d %H:%M:%S') + '\n')
+			f.write('\nWrite your post contents here!')
 		print('Done!')
 
 	def generate(self):
@@ -232,7 +258,7 @@ def main():
 		blog.setup()
 	elif args.get('new'):
 		if args.get('post'):
-			blog.new_post(args.get('<title>'))
+			blog.new_post(args.get('<title>'), args.get('--pubdate'))
 		elif args.get('page'):
 			blog.new_page(args.get('<title>'))
 	else:
