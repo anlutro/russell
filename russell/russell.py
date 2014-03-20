@@ -138,6 +138,7 @@ class Russell():
 			print('File already exists in', path, '- aborting!')
 			return
 
+		dt = None
 		if timestr:
 			try:
 				dt = dateutil.parser.parse(timestr)
