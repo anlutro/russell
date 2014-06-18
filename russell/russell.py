@@ -73,7 +73,8 @@ class Entry():
 				return
 		else:
 			# The time the file was created will be the pubdate.
-			pubdate = datetime.fromtimestamp(os.path.getctime(path))
+			timestamp = min(os.path.getctime(path), os.path.getmtime(path))
+			pubdate = datetime.fromtimestamp(timestamp)
 
 		body = markdown(body)
 
