@@ -220,7 +220,7 @@ class Russell():
 		self.posts.append(post)
 		tpl = self.get_template('post.html')
 		html = tpl.render(post=post)
-		trg_path = os.path.join(trg_dir, post.slug + '.html');
+		trg_path = os.path.join(trg_dir, post.slug + '.html')
 		print('Writing',trg_path)
 		with open(trg_path, 'w+') as f:
 			f.write(html)
