@@ -46,33 +46,40 @@ class Entry():
     def from_file(cls, path):
         """Create a new object from a markdown file."""
         with open(path, 'r') as f:
-            # The first line will be the title of the post.
-            title = f.readline().replace('#', '').strip()
-            # The remaining contents will be the body.
-            body = f.read().strip()
+            lines = f.read().split('\n')
 
-        firstline = body.split('\n')[0]
-        if firstline[:8].lower() == 'pubdate:':
+        # The first line will be the title of the post.
+        title = lines[0].replace('#', '').strip()
+        # The remaining contents will be the body.
+        body = '\n'.join(lines[1:]).strip()
+
+        # Analyze the first line to see if there is a custom pubdate
+        if lines[1][:8].lower() == 'pubdate:':
             try:
-                pubdate = datetime.strptime(firstline[9:], '%Y-%m-%d %H:%M:%S')
+                pubdate = datetime.strptime(lines[1][9:], '%Y-%m-%d %H:%M:%S')
                 body = '\n'.join(body.split('\n')[1:]).strip()
             except ValueError:
-                print('Could not parse datetime from article:', firstline)
+                print('Could not parse datetime from article:', lines[1])
                 print('Pubdate must be in format Y-m-d H:M:S')
                 return
         else:
-            # The time the file was created will be the pubdate.
+            # The oldest of the file's creation date and update time will be
+            # used as a pubdate. This allows you to `touch` a file with a time
+            # in the past to set its pubdate that way
             timestamp = min(os.path.getctime(path), os.path.getmtime(path))
             pubdate = datetime.fromtimestamp(timestamp)
 
+        # convert body from markdown to HTML
         body = markdown(body)
 
         # The slug will be the name of the file.
         slug = os.path.splitext(os.path.basename(path))[0]
+
         return cls(title=title, body=body, pubdate=pubdate, slug=slug)
 
 
 class Blog():
+    """God class that controls the blog."""
     def __init__(self, src_dir, trg_dir, root_url=''):
         self.src_dir = src_dir
         self.trg_dir = trg_dir
@@ -86,12 +93,15 @@ class Blog():
 
     def setup(self):
         def write_file(path, content=''):
+            """Write to a file if it does not already exist."""
             path = os.path.join(self.src_dir, path)
             if not os.path.exists(path):
                 with open(path, 'w+') as f:
                     f.write(content)
 
         print('Setting up directories...')
+
+        # create directories if they don't already exist
         dirs = ['assets', 'pages', 'posts', 'templates']
         for d in dirs:
             d = os.path.join(self.src_dir, d)
@@ -111,6 +121,7 @@ class Blog():
         print('Done!')
 
     def new_page(self, title):
+        """Create a new page file."""
         slug = slugify(title)
         path = os.path.join(self.src_dir, 'pages', slug + '.md')
         if os.path.exists(path):
@@ -122,6 +133,7 @@ class Blog():
         print('Done!')
 
     def new_post(self, title, timestr=None):
+        """Create a new post file."""
         slug = slugify(title)
         path = os.path.join(self.src_dir, 'posts', slug + '.md')
 
@@ -146,6 +158,7 @@ class Blog():
         print('Done!')
 
     def generate(self):
+        """Generate the blog."""
         self.backup()
         print('Generating...')
         print('Copying assets...')
@@ -165,14 +178,18 @@ class Blog():
         print('Done!')
 
     def backup(self):
+        """Generate a backup of existing files."""
         if not os.path.exists(self.trg_dir):
             print('Nothing to back up, skipping...')
             return
+
         trg_dir = os.path.join(self.src_dir, 'backups')
         if not os.path.isdir(trg_dir):
             os.makedirs(trg_dir)
+
         filename = datetime.now().strftime('backup_%Y-%m-%d_%H%M%S.tar')
         trg_path = os.path.join(trg_dir, filename)
+
         print('Backing up data into', trg_path)
         make_tarfile(trg_path, self.trg_dir)
         shutil.rmtree(self.trg_dir)
@@ -191,6 +208,7 @@ class Blog():
         return self.j2env.get_template(tpl)
 
     def convert_page(self, path):
+        """Generate a page html file."""
         trg_dir = self.trg_dir
         if not os.path.isdir(trg_dir):
             os.makedirs(trg_dir)
@@ -199,11 +217,13 @@ class Blog():
         tpl = self.get_template('page.html')
         html = tpl.render(page=page)
         trg_path = os.path.join(trg_dir, page.slug + '.html')
+
         print('Writing', trg_path)
         with open(trg_path, 'w+') as f:
             f.write(html)
 
     def convert_post(self, path):
+        """Generate a post html file."""
         trg_dir = os.path.join(self.trg_dir, 'posts')
         if not os.path.isdir(trg_dir):
             os.makedirs(trg_dir)
@@ -213,11 +233,13 @@ class Blog():
         tpl = self.get_template('post.html')
         html = tpl.render(post=post)
         trg_path = os.path.join(trg_dir, post.slug + '.html')
+
         print('Writing', trg_path)
         with open(trg_path, 'w+') as f:
             f.write(html)
 
     def generate_home(self, limit=5):
+        """Generate the home page."""
         print('Generating home page (index.html)...')
         posts = self.posts[:5]
         tpl = self.get_template('home.html')
@@ -226,6 +248,7 @@ class Blog():
             f.write(html)
 
     def generate_archive(self):
+        """Generate the archive page."""
         print('Generating archives (archive.html)...')
         tpl = self.get_template('archive.html')
         html = tpl.render(posts=self.posts)
@@ -233,6 +256,7 @@ class Blog():
             f.write(html)
 
     def copy_asset(self, path):
+        """Copy asset files."""
         trg_dir = os.path.join(self.trg_dir, 'assets')
         if not os.path.isdir(trg_dir):
             os.makedirs(trg_dir)
