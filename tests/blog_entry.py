@@ -17,6 +17,7 @@ def make_entry(title='Some Title', pubdate=None,
 
 
 class BlogEntryTest(unittest.TestCase):
+
     def test_title_is_sluggified(self):
         entry = make_entry(title='Test Title')
         self.assertEqual('test-title', entry.slug)

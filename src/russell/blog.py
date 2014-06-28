@@ -92,6 +92,7 @@ class Blog():
     def setup_jinja(self):
         loader = FileSystemLoader(os.path.join(self.src_dir, 'templates'))
         self.j2env = Environment(loader=loader)
+        self.j2env.globals['title'] = self.title
         self.j2env.globals['root_url'] = self.root_url
 
     def setup(self):
@@ -152,12 +153,16 @@ class Blog():
                 print('Could not parse datetime', timestr)
                 return
 
+        contents = '# ' + title + '\n'
+        if dt:
+            timestr = dt.strftime('%Y-%m-%d %H:%M:%S')
+            contents = contents + 'pubdate: ' + timestr + '\n'
+        contents = contents + '\nWrite your post contents here!'
+
         print('Creating new post in', path)
         with open(path, 'w+') as f:
-            f.write('# ' + title + '\n')
-            if dt:
-                f.write('pubdate: ' + dt.strftime('%Y-%m-%d %H:%M:%S') + '\n')
-            f.write('\nWrite your post contents here!')
+            f.write(contents)
+
         print('Done!')
 
     def generate(self):
