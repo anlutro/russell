@@ -1,18 +1,28 @@
+from datetime import datetime
 import os
 import shutil
 import tarfile
-from datetime import datetime
 
-import dateutil.parser
 from jinja2 import Environment, FileSystemLoader
 from markdown import markdown
 from slugify import slugify
+import dateutil.parser
+
 
 def make_tarfile(trg_path, src_dir):
+	"""
+	Make a tarfile out of a directory's contents.
+
+	Keyword arguments:
+	trg_path - The path to the target tar file.
+	src_dir - The directory that should be archived.
+	"""
 	with tarfile.open(trg_path, 'w:gz') as tar:
 		tar.add(src_dir, arcname=os.path.basename(src_dir))
 
+
 def list_files(dir):
+	"""List all files recursively in a directory."""
 	results = set()
 
 	for root, dirs, files in os.walk(dir):
@@ -20,6 +30,7 @@ def list_files(dir):
 			results.add(os.path.join(root, f))
 
 	return results
+
 
 class Entry():
 	"""Generic class for posts and pages."""
@@ -59,6 +70,7 @@ class Entry():
 		# The slug will be the name of the file.
 		slug = os.path.splitext(os.path.basename(path))[0]
 		return cls(title=title, body=body, pubdate=pubdate, slug=slug)
+
 
 class Blog():
 	def __init__(self, src_dir, trg_dir, root_url=''):
@@ -102,9 +114,9 @@ class Blog():
 		slug = slugify(title)
 		path = os.path.join(self.src_dir, 'pages', slug + '.md')
 		if os.path.exists(path):
-			print('File already exists in',path,'- aborting!')
+			print('File already exists in', path, '- aborting!')
 			return
-		print('Creating new page in',path)
+		print('Creating new page in', path)
 		with open(path, 'w+') as f:
 			f.write('# ' + title + '\n\nWrite your page contents here!')
 		print('Done!')
@@ -124,11 +136,12 @@ class Blog():
 			except TypeError:
 				print('Could not parse datetime', timestr)
 				return
-	
+
 		print('Creating new post in', path)
 		with open(path, 'w+') as f:
 			f.write('# ' + title + '\n')
-			if dt: f.write('pubdate: ' + dt.strftime('%Y-%m-%d %H:%M:%S') + '\n')
+			if dt:
+				f.write('pubdate: ' + dt.strftime('%Y-%m-%d %H:%M:%S') + '\n')
 			f.write('\nWrite your post contents here!')
 		print('Done!')
 
@@ -186,7 +199,7 @@ class Blog():
 		tpl = self.get_template('page.html')
 		html = tpl.render(page=page)
 		trg_path = os.path.join(trg_dir, page.slug + '.html')
-		print('Writing',trg_path)
+		print('Writing', trg_path)
 		with open(trg_path, 'w+') as f:
 			f.write(html)
 
@@ -200,7 +213,7 @@ class Blog():
 		tpl = self.get_template('post.html')
 		html = tpl.render(post=post)
 		trg_path = os.path.join(trg_dir, post.slug + '.html')
-		print('Writing',trg_path)
+		print('Writing', trg_path)
 		with open(trg_path, 'w+') as f:
 			f.write(html)
 

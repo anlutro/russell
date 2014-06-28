@@ -3,3 +3,4 @@ dist
 virtualenv
 MANIFEST
 *.egg-info
+requirements.txt

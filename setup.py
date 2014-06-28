@@ -4,17 +4,17 @@ import os.path
 from setuptools import setup, find_packages
 
 setup(
-    name = 'russell',
-    packages = ['russell'],
-    version = '0.2.2',
-    license = 'MIT',
-    description = 'A static HTML blog generator.',
-    author = 'Andreas Lutro',
-    author_email = 'anlutro@gmail.com',
-    url = 'https://github.com/anlutro/russell',
-    keywords = ['blog', 'static', 'html', 'generator'],
-    classifiers = [],
-    install_requires = [
+    name='russell',
+    packages=['russell'],
+    version='0.2.2',
+    license='MIT',
+    description='A static HTML blog generator.',
+    author='Andreas Lutro',
+    author_email='anlutro@gmail.com',
+    url='https://github.com/anlutro/russell',
+    keywords=['blog', 'static', 'html', 'generator'],
+    classifiers=[],
+    install_requires=[
         'Jinja2>=2.7.0',
         'Markdown>=2.4',
         'MarkupSafe>=0.19',
@@ -23,7 +23,7 @@ setup(
         'python-slugify>=0.0.7',
         'python-dateutil>=2.2',
     ],
-    package_dir = {'' :'src'},
+    package_dir={'': 'src'},
     entry_points={
         "console_scripts": ["russell=russell.cli:main"]
     },

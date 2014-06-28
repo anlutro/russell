@@ -4,27 +4,28 @@
 Russell - A static blog HTML generator
 
 Usage:
-  russell generate [src] [target] [--url=<url>]
-  russell setup [src]
-  russell new page <title>
-  russell new post <title> [--pubdate=<datetime>]
+	russell generate [src] [target] [--url=<url>]
+	russell setup [src]
+	russell new page <title>
+	russell new post <title> [--pubdate=<datetime>]
 
 Arguments:
-  src     The source directory where assets, pages, posts and templates
-          reside. Defaults to CWD.
-  target  The target directory where HTML and assets should be published.
-          Defaults to CWD/public.
-  title   Title of the new post/page. Remember to wrap in quotes.
+	src	The source directory where assets, pages, posts and templates reside.
+		Defaults to CWD.
+	target	The target directory where HTML and assets should be published.
+		Defaults to CWD/public.
+	title	Title of the new post/page. Remember to wrap in quotes.
 
 Options:
-  --url=<url>  Root URL of the website.
-  -h|--help    Show this help screen.
+	--url=<url>  Root URL of the website.
+	-h|--help    Show this help screen.
 """
 
 import os
 from docopt import docopt
 
 from .blog import Blog
+
 
 def main():
 	args = docopt(__doc__)
