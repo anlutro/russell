@@ -1,4 +1,4 @@
-# Russell [![Build Status](https://travis-ci.org/anlutro/russell.png?branch=master)]
+# Russell ![Build Status](https://travis-ci.org/anlutro/russell.png?branch=master)
 
 A static blog HTML generator written in Python 3.
 
