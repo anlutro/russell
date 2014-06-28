@@ -1,6 +1,6 @@
-# Russell
+# Russell [![Build Status](https://travis-ci.org/anlutro/russell.png?branch=master)]
 
-A static blog HTML generator for Python 3.
+A static blog HTML generator written in Python 3.
 
 ## Installation
 
@@ -9,18 +9,6 @@ A static blog HTML generator for Python 3.
 ## Usage
 
 `russell setup` will set up a directory structure for blogging with Russell in the current working directory. This will create the 'assets', 'backups', 'pages', 'posts', 'templates' directories, and create the required templates.
-
-### Templating
-
-Jinja2 is used as a templating engine, and all its features are present.
-
-`root_url` has been added as a global variable, which you can use for generating urls in your template.
-
-You may create your own layout.html template and then extend that via `{% extends 'layout.html' %}`.
-
-The home.html and archive.html templates have the `posts` variable available, post.html has the `post` variable and page.html has the `page` variable. `posts` is an array of Entry objects, the others are a single instance of an Entry.
-
-An Entry object has the following properties: title, body, excerpt, slug and pubdate (datetime.datetime).
 
 ### Creating pages/posts
 
@@ -32,10 +20,30 @@ Simply running `russell generate` will take all content from the current working
 
 To specify a custom source/target path, simply use `russell /path/to/content /path/to/public`
 
-You can specify the root url (you should) with `--url="http://www.website.com".
+You can specify the root url (you should) with `--url="http://www.website.com".`
+
+### Templating
+
+Jinja2 is used as a templating engine, and all its features are present.
+
+`root_url` has been added as a global variable, which you can use for generating urls in your template.
+
+You may create your own layout.html template and then extend that via `{% extends 'layout.html' %}`.
+
+The home.html and archive.html templates have the `posts` variable available, post.html has the `post` variable and page.html has the `page` variable. `posts` is an array of Entry objects, the others are a single instance of an Entry.
+
+An Entry object has the following properties:
+
+- title (string)
+- body (string)
+- excerpt (string)
+- slug (string)
+- pubdate (datetime.datetime)
 
 ## Contact
+
 Open an issue on GitHub if you have any problems or suggestions.
 
 ## License
+
 The contents of this repository is released under the [MIT license](http://opensource.org/licenses/MIT). See the LICENSE file included for details.
