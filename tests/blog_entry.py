@@ -29,15 +29,17 @@ class BlogEntryTest(unittest.TestCase):
 class EntryFromFileTest(unittest.TestCase):
     body = '# Title\n\nBody'
     pubdate_body = '# Title\npubdate: 2014-01-01 12:00:00\n\nBody'
+    getctime = datetime(2014, 1, 2, 12, 0, 0)
+    getmtime = datetime(2014, 1, 1, 12, 0, 0)
 
-    @patch('os.path', getctime=MagicMock(return_value=1410000000),
-           getmtime=MagicMock(return_value=1400000000))
+    @patch('os.path', getctime=MagicMock(return_value=getctime.timestamp()),
+           getmtime=MagicMock(return_value=getmtime.timestamp()))
     @patch('builtins.open', mock_open(read_data=body), create=True)
     def test_entry_can_be_created_from_file(self, path_mock):
         entry = Entry.from_file('/fake/path')
         self.assertEqual('Title', entry.title)
         self.assertEqual('<p>Body</p>', entry.body)
-        self.assertEqual(datetime(2014, 5, 13, 18, 53, 20), entry.pubdate)
+        self.assertEqual(datetime(2014, 1, 1, 12, 0, 0), entry.pubdate)
 
     @patch('builtins.open', mock_open(read_data=pubdate_body), create=True)
     def test_pubdate_is_parsed_from_body(self):
