@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 setup(
     name='russell',
     packages=['russell'],
-    version='0.2.2',
+    version='0.3.0',
     license='MIT',
     description='A static HTML blog generator.',
     author='Andreas Lutro',
@@ -22,6 +22,7 @@ setup(
         'docopt>=0.6.1',
         'python-slugify>=0.0.7',
         'python-dateutil>=2.2',
+        'PyRSS2Gen>=1.1',
     ],
     package_dir={'': 'src'},
     entry_points={

@@ -8,6 +8,8 @@ from markdown import markdown
 from slugify import slugify
 import dateutil.parser
 
+from .feed import FeedGenerator
+
 
 def make_tarfile(trg_path, src_dir):
     """
@@ -37,7 +39,8 @@ class Entry():
     def __init__(self, title, pubdate, body, tags=set(), slug=None):
         self.title = title
         self.pubdate = pubdate
-        self.body = body
+        self.raw_body = body
+        self.body = markdown(body)
         self.excerpt = body.split('\n', 1)[0]
         self.tags = tags
         self.slug = slug or slugify(title)
@@ -69,9 +72,6 @@ class Entry():
             timestamp = min(os.path.getctime(path), os.path.getmtime(path))
             pubdate = datetime.fromtimestamp(timestamp)
 
-        # convert body from markdown to HTML
-        body = markdown(body)
-
         # The slug will be the name of the file.
         slug = os.path.splitext(os.path.basename(path))[0]
 
@@ -80,16 +80,19 @@ class Entry():
 
 class Blog():
     """God class that controls the blog."""
-    def __init__(self, src_dir, trg_dir, root_url=''):
+    def __init__(self, src_dir, trg_dir, title='', root_url=''):
         self.src_dir = src_dir
         self.trg_dir = trg_dir
-        self.setup_jinja(root_url)
+        self.title = title
+        self.root_url = root_url
+
+        self.setup_jinja()
         self.posts = []
 
-    def setup_jinja(self, root_url):
+    def setup_jinja(self):
         loader = FileSystemLoader(os.path.join(self.src_dir, 'templates'))
         self.j2env = Environment(loader=loader)
-        self.j2env.globals['root_url'] = root_url
+        self.j2env.globals['root_url'] = self.root_url
 
     def setup(self):
         def write_file(path, content=''):
@@ -175,6 +178,7 @@ class Blog():
         self.posts.sort(key=lambda post: post.pubdate, reverse=True)
         self.generate_home()
         self.generate_archive()
+        self.generate_feed()
         print('Done!')
 
     def backup(self):
@@ -214,6 +218,7 @@ class Blog():
             os.makedirs(trg_dir)
 
         page = Entry.from_file(path)
+        page.url = self.root_url + '/' + page.slug
         tpl = self.get_template('page.html')
         html = tpl.render(page=page)
         trg_path = os.path.join(trg_dir, page.slug + '.html')
@@ -229,6 +234,7 @@ class Blog():
             os.makedirs(trg_dir)
 
         post = Entry.from_file(path)
+        post.url = self.root_url + '/posts/' + post.slug
         self.posts.append(post)
         tpl = self.get_template('post.html')
         html = tpl.render(post=post)
@@ -254,6 +260,12 @@ class Blog():
         html = tpl.render(posts=self.posts)
         with open(os.path.join(self.trg_dir, 'archive.html'), 'w+') as f:
             f.write(html)
+
+    def generate_feed(self):
+        """Generate the blog RSS feed."""
+        print('Generating RSS feed...')
+        fg = FeedGenerator(self)
+        fg.write_to(os.path.join(self.trg_dir, 'rss.xml'))
 
     def copy_asset(self, path):
         """Copy asset files."""
