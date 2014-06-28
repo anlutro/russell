@@ -241,7 +241,7 @@ class Blog():
     def generate_home(self, limit=5):
         """Generate the home page."""
         print('Generating home page (index.html)...')
-        posts = self.posts[:5]
+        posts = self.posts[:limit]
         tpl = self.get_template('home.html')
         html = tpl.render(posts=posts)
         with open(os.path.join(self.trg_dir, 'index.html'), 'w+') as f:
