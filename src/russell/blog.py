@@ -1,31 +1,9 @@
-#!/usr/bin/env python3
-
-"""
-Russell - A static blog HTML generator
-
-Usage:
-  russell generate [src] [target] [--url=<url>]
-  russell setup [src]
-  russell new page <title>
-  russell new post <title> [--pubdate=<datetime>]
-
-Arguments:
-  src     The source directory where assets, pages, posts and templates
-          reside. Defaults to CWD.
-  target  The target directory where HTML and assets should be published.
-          Defaults to CWD/public.
-  title   Title of the new post/page. Remember to wrap in quotes.
-
-Options:
-  --url=<url>  Root URL of the website.
-  -h|--help    Show this help screen.
-"""
-
-import os, shutil, tarfile
+import os
+import shutil
+import tarfile
 from datetime import datetime
 
 import dateutil.parser
-from docopt import docopt
 from jinja2 import Environment, FileSystemLoader
 from markdown import markdown
 from slugify import slugify
@@ -82,7 +60,7 @@ class Entry():
 		slug = os.path.splitext(os.path.basename(path))[0]
 		return cls(title=title, body=body, pubdate=pubdate, slug=slug)
 
-class Russell():
+class Blog():
 	def __init__(self, src_dir, trg_dir, root_url=''):
 		self.src_dir = src_dir
 		self.trg_dir = trg_dir
@@ -176,6 +154,7 @@ class Russell():
 	def backup(self):
 		if not os.path.exists(self.trg_dir):
 			print('Nothing to back up, skipping...')
+			return
 		trg_dir = os.path.join(self.src_dir, 'backups')
 		if not os.path.isdir(trg_dir):
 			os.makedirs(trg_dir)
@@ -245,26 +224,3 @@ class Russell():
 		if not os.path.isdir(trg_dir):
 			os.makedirs(trg_dir)
 		shutil.copy2(path, trg_dir)
-
-def main():
-	args = docopt(__doc__)
-#	print(args)
-#	return
-
-	src_dir = args.get('src') or os.getcwd()
-	trg_dir = args.get('target') or os.path.join(src_dir, 'public')
-	root_url = args.get('--url') or ''
-	blog = Russell(src_dir, trg_dir, root_url=root_url)
-
-	if args.get('setup'):
-		blog.setup()
-	elif args.get('new'):
-		if args.get('post'):
-			blog.new_post(args.get('<title>'), args.get('--pubdate'))
-		elif args.get('page'):
-			blog.new_page(args.get('<title>'))
-	else:
-		blog.generate()
-
-if __name__ == '__main__':
-	main()

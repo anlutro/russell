@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
 import os.path
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name = 'russell',
     packages = ['russell'],
-    version = '0.2.1',
+    version = '0.2.2',
     license = 'MIT',
     description = 'A static HTML blog generator.',
     author = 'Andreas Lutro',
@@ -23,7 +23,8 @@ setup(
         'python-slugify>=0.0.7',
         'python-dateutil>=2.2',
     ],
+    package_dir = {'' :'src'},
     entry_points={
-        "console_scripts": ["russell=russell.russell:main"]
+        "console_scripts": ["russell=russell.cli:main"]
     },
 )
