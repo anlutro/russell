@@ -17,8 +17,6 @@ setup(
     install_requires=[
         'Jinja2>=2.7.0',
         'Markdown>=2.4',
-        'MarkupSafe>=0.19',
-        'Unidecode>=0.04.14',
         'docopt>=0.6.1',
         'python-slugify>=0.0.7',
         'python-dateutil>=2.2',
