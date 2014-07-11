@@ -24,7 +24,7 @@ class BlogEntryTest(unittest.TestCase):
 
     def test_excerpt_is_first_paragraph(self):
         entry = make_entry(body='p1\np2')
-        self.assertEqual('p1', entry.excerpt)
+        self.assertEqual('<p>p1</p>', entry.excerpt)
 
 
 class EntryFromFileTest(unittest.TestCase):

@@ -41,7 +41,7 @@ class Entry():
         self.pubdate = pubdate
         self.raw_body = body
         self.body = markdown(body)
-        self.excerpt = self.body.split('\n', 1)[0]
+        self.excerpt = markdown(body.split('\n', 1)[0])
         self.tags = tags
         self.slug = slug or slugify(title)
 
