@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 setup(
     name='russell',
     packages=['russell'],
-    version='0.3.0',
+    version='0.3.1',
     license='MIT',
     description='A static HTML blog generator.',
     author='Andreas Lutro',
