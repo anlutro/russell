@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 tests=''
 
@@ -7,3 +7,4 @@ for file in tests/*.py; do
 done
 
 python3 -m unittest $tests
+
