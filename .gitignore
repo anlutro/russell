@@ -4,3 +4,5 @@ virtualenv
 MANIFEST
 *.egg-info
 requirements.txt
+*.sublime*
+*.pyc

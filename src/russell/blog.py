@@ -120,9 +120,10 @@ class Blog():
         write_file(os.path.join('templates', 'archive.html'))
         write_file(os.path.join('templates', 'home.html'))
         write_file(os.path.join('templates', 'page.html'))
+        write_file(os.path.join('templates', 'post.html'))
         write_file(os.path.join('templates', 'single.html'))
         write_file(os.path.join('assets', 'style.css'))
-        print('Done!')
+        print('Done! Don\'t forget to edit the template files.')
 
     def new_page(self, title):
         """Create a new page file."""
