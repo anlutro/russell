@@ -48,21 +48,18 @@ class Entry():
     @classmethod
     def from_file(cls, path):
         """Create a new object from a markdown file."""
-        with open(path, 'r') as f:
-            lines = f.read().split('\n')
+        with open(path) as f:
+            lines = [s.strip() for s in f.readlines()]
 
         # The first line will be the title of the post.
-        title = lines[0].replace('#', '').strip()
-        # The remaining contents will be the body.
-        body = '\n'.join(lines[1:]).strip()
+        title = lines.pop(0).replace('#', '')
 
         # Analyze the first line to see if there is a custom pubdate
-        if lines[1][:8].lower() == 'pubdate:':
+        if lines[0][:8].lower() == 'pubdate:':
             try:
-                pubdate = datetime.strptime(lines[1][9:], '%Y-%m-%d %H:%M:%S')
-                body = '\n'.join(body.split('\n')[1:]).strip()
+                pubdate = datetime.strptime(lines.pop(0)[9:], '%Y-%m-%d %H:%M:%S')
             except ValueError:
-                print('Could not parse datetime from article:', lines[1])
+                print('Could not parse datetime from article:', lines[0])
                 print('Pubdate must be in format Y-m-d H:M:S')
                 return
         else:
@@ -74,6 +71,8 @@ class Entry():
 
         # The slug will be the name of the file.
         slug = os.path.splitext(os.path.basename(path))[0]
+
+        body = '\n'.join(lines)
 
         return cls(title=title, body=body, pubdate=pubdate, slug=slug)
 
