@@ -134,7 +134,7 @@ class Blog():
             return
         print('Creating new page in', path)
         with open(path, 'w+') as f:
-            f.write('# ' + title + '\n\nWrite your page contents here!')
+            f.write('# ' + title + '\n\nWrite your page contents here!\n')
         print('Done!')
 
     def new_post(self, title, timestr=None):
@@ -154,11 +154,12 @@ class Blog():
                 print('Could not parse datetime', timestr)
                 return
 
-        contents = '# ' + title + '\n'
-        if dt:
-            timestr = dt.strftime('%Y-%m-%d %H:%M:%S')
-            contents = contents + 'pubdate: ' + timestr + '\n'
-        contents = contents + '\nWrite your post contents here!'
+        if not dt:
+            dt = datetime.now()
+        timestr = dt.strftime('%Y-%m-%d %H:%M:%S')
+
+        contents = '# ' + title + '\n' + 'pubdate: ' + timestr + '\n\n' \
+            + 'Write your post contents here!\n'
 
         print('Creating new post in', path)
         with open(path, 'w+') as f:

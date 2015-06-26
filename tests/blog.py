@@ -19,7 +19,7 @@ class BlogTest(unittest.TestCase):
         blog = make_blog()
         blog.new_page('Fake title')
         m.assert_called_once_with('/fake/src/pages/fake-title.md', 'w+')
-        write_str = '# Fake title\n\nWrite your page contents here!'
+        write_str = '# Fake title\n\nWrite your page contents here!\n'
         m().write.assert_called_once_with(write_str)
 
     @patch('builtins.open', new_callable=mock_open)
@@ -27,5 +27,7 @@ class BlogTest(unittest.TestCase):
         blog = make_blog()
         blog.new_post('Fake title')
         m.assert_called_once_with('/fake/src/posts/fake-title.md', 'w+')
-        write_str = '# Fake title\n\nWrite your post contents here!'
+        timestr = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        write_str = '# Fake title\npubdate: ' + timestr \
+            + '\n\nWrite your post contents here!\n'
         m().write.assert_called_once_with(write_str)
