@@ -8,7 +8,7 @@ from markdown import markdown
 from slugify import slugify
 import dateutil.parser
 
-from .feed import FeedGenerator
+from .feed import write_rss
 
 
 def make_tarfile(trg_path, src_dir):
@@ -271,8 +271,7 @@ class Blog():
     def generate_feed(self):
         """Generate the blog RSS feed."""
         print('Generating RSS feed...')
-        fg = FeedGenerator(self)
-        fg.write_to(os.path.join(self.trg_dir, 'rss.xml'))
+        write_rss(self, os.path.join(self.trg_dir, 'rss.xml'))
 
     def copy_asset(self, path):
         """Copy asset files."""
