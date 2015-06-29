@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 
 from __future__ import print_function
+from setuptools import setup, find_packages
+import os.path
 import sys
 
 if sys.version_info[0] != 3:
     print("Only Python 3 is supported!")
     sys.exit(1)
-
-import os.path
-from setuptools import setup, find_packages
 
 setup(
     name='russell',
