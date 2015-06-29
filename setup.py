@@ -10,7 +10,6 @@ if sys.version_info[0] != 3:
 import os.path
 from setuptools import setup, find_packages
 
-sys.exit(0)
 setup(
     name='russell',
     packages=['russell'],
