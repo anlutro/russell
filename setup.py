@@ -1,8 +1,16 @@
 #!/usr/bin/env python3
 
+from __future__ import print_function
+import sys
+
+if sys.version_info[0] != 3:
+    print("Only Python 3 is supported!")
+    sys.exit(1)
+
 import os.path
 from setuptools import setup, find_packages
 
+sys.exit(0)
 setup(
     name='russell',
     packages=['russell'],
