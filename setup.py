@@ -28,7 +28,6 @@ setup(
         'python-dateutil>=2.2',
         'PyRSS2Gen>=1.1',
     ],
-    package_dir={'': 'src'},
     entry_points={
         "console_scripts": ["russell=russell.cli:main"]
     },
