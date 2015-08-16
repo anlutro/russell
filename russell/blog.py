@@ -1,7 +1,6 @@
 from datetime import datetime
 import os
 import shutil
-import tarfile
 
 from jinja2 import Environment, FileSystemLoader
 from markdown import markdown
@@ -9,18 +8,6 @@ from slugify import slugify
 import dateutil.parser
 
 from .feed import write_rss
-
-
-def make_tarfile(trg_path, src_dir):
-    """
-    Make a tarfile out of a directory's contents.
-
-    Keyword arguments:
-    trg_path - The path to the target tar file.
-    src_dir - The directory that should be archived.
-    """
-    with tarfile.open(trg_path, 'w:gz') as tar:
-        tar.add(src_dir, arcname=os.path.basename(src_dir))
 
 
 def list_files(dir):
@@ -169,7 +156,6 @@ class Blog():
 
     def generate(self):
         """Generate the blog."""
-        self.backup()
         print('Generating...')
         print('Copying assets...')
         for f in self.get_asset_files():
@@ -187,24 +173,6 @@ class Blog():
         self.generate_archive()
         self.generate_feed()
         print('Done!')
-
-    def backup(self):
-        """Generate a backup of existing files."""
-        if not os.path.exists(self.trg_dir):
-            print('Nothing to back up, skipping...')
-            return
-
-        trg_dir = os.path.join(self.src_dir, 'backups')
-        if not os.path.isdir(trg_dir):
-            os.makedirs(trg_dir)
-
-        filename = datetime.now().strftime('backup_%Y-%m-%d_%H%M%S.tar')
-        trg_path = os.path.join(trg_dir, filename)
-
-        print('Backing up data into', trg_path)
-        make_tarfile(trg_path, self.trg_dir)
-        shutil.rmtree(self.trg_dir)
-        os.makedirs(self.trg_dir)
 
     def get_asset_files(self):
         return list_files(os.path.join(self.src_dir, 'assets'))
