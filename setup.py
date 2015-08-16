@@ -27,6 +27,7 @@ setup(
         'python-slugify>=0.0.7',
         'python-dateutil>=2.2',
         'PyRSS2Gen>=1.1',
+        'PyYAML>=3.11',
     ],
     entry_points={
         "console_scripts": ["russell=russell.cli:main"]
