@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Russell - A static blog HTML generator
+Russell - A static HTML site generator
 
 Usage:
     russell generate [--config=<config>] [--src=<src>] [--target=<target>]

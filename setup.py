@@ -21,10 +21,10 @@ setup(
     keywords=['blog', 'static', 'html', 'generator'],
     classifiers=[],
     install_requires=[
-        'Jinja2>=2.7.0',
+        'Jinja2>=2.7',
         'Markdown>=2.4',
         'docopt>=0.6.1',
-        'python-slugify>=0.0.7',
+        'python-slugify>=1.1',
         'python-dateutil>=2.2',
         'PyRSS2Gen>=1.1',
         'PyYAML>=3.11',

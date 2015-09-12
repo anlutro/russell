@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 import shutil
 
-from jinja2 import Environment, FileSystemLoader
+import jinja2
 from markdown import markdown
 from slugify import slugify
 import dateutil.parser
@@ -38,29 +38,33 @@ class Entry():
         with open(path, 'r') as f:
             lines = f.read().split('\n')
 
-        # The first line will be the title of the post.
-        title = lines[0].replace('#', '').strip()
-        # The remaining contents will be the body.
-        body = '\n'.join(lines[1:]).strip()
+        # The slug will be the name of the file.
+        slug = os.path.splitext(os.path.basename(path))[0]
 
-        # Analyze the first line to see if there is a custom pubdate
-        if lines[1][:8].lower() == 'pubdate:':
-            try:
-                pubdate = datetime.strptime(lines[1][9:], '%Y-%m-%d %H:%M:%S')
-                body = '\n'.join(body.split('\n')[1:]).strip()
-            except ValueError:
-                print('Could not parse datetime from article:', lines[1])
-                print('Pubdate must be in format Y-m-d H:M:S')
-                return
-        else:
-            # The oldest of the file's creation date and update time will be
-            # used as a pubdate. This allows you to `touch` a file with a time
-            # in the past to set its pubdate that way
+        title = None
+        pubdate = None
+
+        line = lines.pop(0)
+        while line != '':
+            if line.startswith('#'):
+                title = line.replace('#', '').strip()
+            elif line[:6].lower() == 'title:':
+                title = line[7:].strip()
+            elif line[:8].lower() == 'pubdate:':
+                try:
+                    pubdate = datetime.strptime(line[9:], '%Y-%m-%d %H:%M:%S')
+                except ValueError:
+                    print('Could not parse datetime from article:', line)
+                    print('Pubdate must be in format Y-m-d H:M:S')
+                    return
+            line = lines.pop(0)
+
+        if not pubdate:
             timestamp = min(os.path.getctime(path), os.path.getmtime(path))
             pubdate = datetime.fromtimestamp(timestamp)
 
-        # The slug will be the name of the file.
-        slug = os.path.splitext(os.path.basename(path))[0]
+        # The remaining contents will be the body.
+        body = '\n'.join(lines).strip()
 
         return cls(title=title, body=body, pubdate=pubdate, slug=slug)
 
@@ -77,8 +81,8 @@ class Blog():
         self.posts = []
 
     def setup_jinja(self):
-        loader = FileSystemLoader(os.path.join(self.src_dir, 'templates'))
-        self.j2env = Environment(loader=loader)
+        loader = jinja2.FileSystemLoader(os.path.join(self.src_dir, 'templates'))
+        self.j2env = jinja2.Environment(loader=loader)
         self.j2env.globals['title'] = self.title
         self.j2env.globals['root_url'] = self.root_url
 
