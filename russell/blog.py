@@ -21,6 +21,16 @@ def list_files(dir):
     return results
 
 
+def parse_pubdate(string):
+    formats = ('%Y-%m-%d %H:%M:%S', '%Y-%m-%d')
+    for dateformat in formats:
+        try:
+            return datetime.strptime(string, dateformat)
+        except ValueError:
+            pass
+    return None
+
+
 class Entry():
     """Generic class for posts and pages."""
     def __init__(self, title, pubdate, body, tags=set(), slug=None):
@@ -51,12 +61,10 @@ class Entry():
             elif line[:6].lower() == 'title:':
                 title = line[7:].strip()
             elif line[:8].lower() == 'pubdate:':
-                try:
-                    pubdate = datetime.strptime(line[9:], '%Y-%m-%d %H:%M:%S')
-                except ValueError:
+                pubdate = parse_pubdate(line[9:])
+                if not pubdate:
                     print('Could not parse datetime from article:', line)
                     print('Pubdate must be in format Y-m-d H:M:S')
-                    return
             line = lines.pop(0)
 
         if not pubdate:
