@@ -33,7 +33,7 @@ def parse_pubdate(string):
 
 class Entry():
     """Generic class for posts and pages."""
-    def __init__(self, title, pubdate, body, tags=set(), slug=None):
+    def __init__(self, title, pubdate, body, tags=set(), slug=None, image=None):
         self.title = title
         self.pubdate = pubdate
         self.raw_body = body
@@ -41,6 +41,7 @@ class Entry():
         self.excerpt = markdown(body.split('\n', 1)[0])
         self.tags = tags
         self.slug = slug or slugify(title)
+        self.image = image
 
     @classmethod
     def from_file(cls, path):
@@ -53,18 +54,24 @@ class Entry():
 
         title = None
         pubdate = None
+        image = None
 
         line = lines.pop(0)
         while line != '':
             if line.startswith('#'):
                 title = line.replace('#', '').strip()
-            elif line[:6].lower() == 'title:':
+            elif line.startswith('title:'):
                 title = line[7:].strip()
-            elif line[:8].lower() == 'pubdate:':
+
+            elif line.startswith('pubdate:'):
                 pubdate = parse_pubdate(line[9:])
                 if not pubdate:
                     print('Could not parse datetime from article:', line)
                     print('Pubdate must be in format Y-m-d H:M:S')
+
+            elif line.startswith('image:'):
+                image = line[7:].strip()
+
             line = lines.pop(0)
 
         if not pubdate:
@@ -74,7 +81,7 @@ class Entry():
         # The remaining contents will be the body.
         body = '\n'.join(lines).strip()
 
-        return cls(title=title, body=body, pubdate=pubdate, slug=slug)
+        return cls(title=title, body=body, pubdate=pubdate, slug=slug, image=image)
 
 
 class Blog():
