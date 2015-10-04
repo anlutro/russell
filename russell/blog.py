@@ -72,6 +72,9 @@ class Entry():
             elif line.startswith('image:'):
                 image = line[7:].strip()
 
+            elif line.startswith('slug:'):
+                slug = line[6:].strip()
+
             line = lines.pop(0)
 
         if not pubdate:
