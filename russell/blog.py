@@ -190,6 +190,8 @@ class Blog():
             self.convert_post(f)
 
         # sort posts by pubdate (newest first) before generating home/archives
+        # on identical pubdate, sort by title
+        self.posts.sort(key=lambda post: post.title)
         self.posts.sort(key=lambda post: post.pubdate, reverse=True)
         self.generate_home()
         self.generate_archive()
