@@ -21,6 +21,7 @@ def write_rss(blog, path):
 def get_post_rss(post):
     return PyRSS2Gen.RSSItem(
         title=post.title,
+        description=post.excerpt,
         link=post.url,
         pubDate=post.pubdate
     )
