@@ -1,14 +1,15 @@
 # python
-__pycache__
-*.pyc
 *.egg-info
+*.pyc
+__pycache__
 
 # virtualenv/pip
 /bin
+/dist
 /include
 /lib
-/share
 /pip-selfcheck.json
+/share
 
 # pytest
 /.cache
