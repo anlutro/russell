@@ -12,7 +12,7 @@ if sys.version_info[0] != 3:
 setup(
     name='russell',
     packages=['russell'],
-    version='0.3.4',
+    version='0.4.0',
     license='MIT',
     description='A static HTML blog generator.',
     author='Andreas Lutro',
@@ -23,10 +23,9 @@ setup(
     install_requires=[
         'Jinja2>=2.7',
         'Markdown>=2.4',
-        'docopt>=0.6.1',
-        'python-slugify>=1.1',
-        'python-dateutil>=2.2',
         'PyRSS2Gen>=1.1',
+        'python-dateutil>=2.2',
+        'python-slugify>=1.1',
         'PyYAML>=3.11',
     ],
     entry_points={

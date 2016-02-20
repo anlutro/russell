@@ -1,8 +1,15 @@
-*__pycache__
-dist
-virtualenv
-MANIFEST
-*.egg-info
-requirements.txt
-*.sublime*
+# python
+__pycache__
 *.pyc
+*.egg-info
+
+# virtualenv/pip
+/bin
+/include
+/lib
+/share
+/pip-selfcheck.json
+
+# pytest
+/.cache
+/.coverage

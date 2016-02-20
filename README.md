@@ -1,14 +1,16 @@
 # Russell ![Build Status](https://travis-ci.org/anlutro/russell.png?branch=master)
 
-A static blog HTML generator written in Python 3.
+A static HTML site generator written in Python 3.
 
 ## Installation
 
-`pip install russell`
+	pip install russell --user
+
+Optionally, create a virtualenv and install in there.
 
 ## Usage
 
-`russell setup` will set up a directory structure for blogging with Russell in the current working directory. This will create the 'assets', 'pages', 'posts', 'templates' directories, and create the required templates.
+`russell setup` will set up a directory structure for blogging with Russell in the current working directory. This will create the 'pages', 'posts', 'templates' directories, and create the required templates.
 
 ### Creating pages/posts
 
