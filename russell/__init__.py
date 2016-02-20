@@ -52,7 +52,8 @@ class Application:
 		posts = russell.parser.read_posts(self.config['posts_path'], root_url)
 		tags = russell.parser.get_tags(posts)
 		jinja_env = russell.jinja.make_env(self.config['templates_path'], root_url)
-		russell.generator.generate(dist_path, pages, posts, tags, jinja_env)
+		russell.generator.generate(dist_path, pages, posts, tags, jinja_env,
+			home_num_posts=self.config.get('home_num_posts', 5))
 
 		rss_path = os.path.join(dist_path, 'rss.xml')
 		rss_title = self.config.get('title', root_url)

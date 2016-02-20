@@ -5,14 +5,14 @@ import logging
 LOG = logging.getLogger(__name__)
 
 
-def generate(path, pages, posts, tags, jinja_env):
+def generate(path, pages, posts, tags, jinja_env, home_num_posts=5):
 	if not os.path.isdir(path):
 		os.mkdir(path)
 
 	generate_pages(path, pages, jinja_env)
 	generate_posts(os.path.join(path, 'posts'), posts, jinja_env)
 	generate_tags(os.path.join(path, 'tags'), tags, posts, jinja_env)
-	generate_home(os.path.join(path, 'index.html'), posts, jinja_env)
+	generate_home(os.path.join(path, 'index.html'), posts[:home_num_posts], jinja_env)
 	generate_archive(os.path.join(path, 'archive.html'), posts, jinja_env)
 
 
