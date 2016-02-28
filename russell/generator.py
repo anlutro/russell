@@ -25,7 +25,7 @@ class Generator:
 		self.generate_archive(posts)
 
 	def generate_pages(self, pages):
-		path = self._path_to('pages')
+		path = self.root_path
 		template = self.jinja_env.get_template('page.html.jinja')
 
 		for page in pages:
