@@ -9,9 +9,18 @@ import russell.util
 LOG = logging.getLogger(__name__)
 
 
-def from_file_contents(contents, cls, kwargs=None):
+def from_file_contents(contents, cls, kwargs=None, tags=None):
 	if kwargs is None:
 		kwargs = {}
+	if tags is None:
+		tags = {}
+
+	def make_tag(tag_name):
+		tag_name = tag_name.strip()
+		if tag_name not in tags:
+			tags[tag_name] = russell.content.Tag(tag_name,
+				root_url=kwargs.get('root_url', ''))
+		return tags[tag_name]
 
 	lines = contents.splitlines()
 	title = None
@@ -35,10 +44,7 @@ def from_file_contents(contents, cls, kwargs=None):
 				LOG.warning('Could not parse datetime "%s"', pubdate_str)
 
 		elif line.startswith('tags:') and cls is russell.content.Post:
-			kwargs['tags'] = [
-				russell.content.Tag(tag.strip(), root_url=kwargs.get('root_url', ''))
-				for tag in line[5:].strip().split(',')
-			]
+			kwargs['tags'] = [make_tag(tag) for tag in line[5:].strip().split(',')]
 
 		line = lines.pop(0)
 
@@ -53,7 +59,7 @@ def from_file_contents(contents, cls, kwargs=None):
 	return cls(title=title, body=body, **kwargs)
 
 
-def from_file(path, cls, kwargs=None):
+def from_file(path, cls, kwargs=None, tags=None):
 	if kwargs is None:
 		kwargs = {}
 
@@ -63,7 +69,7 @@ def from_file(path, cls, kwargs=None):
 	kwargs['slug'] = os.path.splitext(os.path.basename(path))[0]
 
 	with open(path, 'r') as file:
-		post = from_file_contents(file.read(), cls, kwargs)
+		post = from_file_contents(file.read(), cls, kwargs, tags)
 
 	# if a pubdate wasn't found, use the file's last modified time
 	if cls is russell.content.Post and not kwargs.get('pubdate'):

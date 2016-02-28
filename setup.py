@@ -12,7 +12,7 @@ if sys.version_info[0] != 3:
 setup(
     name='russell',
     packages=['russell'],
-    version='0.4.2',
+    version='0.4.3',
     license='MIT',
     description='A static HTML blog generator.',
     author='Andreas Lutro',

@@ -30,10 +30,11 @@ def read_pages(path, root_url):
 
 def read_posts(path, root_url):
 	posts = []
+	tags = {}
 	LOG.debug('looking for post files in %s', path)
 	for file in _list_files(path):
 		post = russell.markdown.from_file(file, russell.content.Post,
-			kwargs={'root_url': root_url})
+			kwargs={'root_url': root_url}, tags=tags)
 		posts.append(post)
 
 	posts.sort(key=lambda post: post.title)
