@@ -41,7 +41,11 @@ def from_file_contents(contents, cls, kwargs=None, tags=None):
 			if pubdate:
 				kwargs['pubdate'] = pubdate
 			else:
-				LOG.warning('Could not parse datetime "%s"', pubdate_str)
+				LOG.warning('while parsing post "%s", found invalid pubdate: "%s"',
+					title, pubdate_str)
+			if not pubdate.tzinfo:
+				LOG.warning('while parsing post "%s", found pubdate without timezone: "%s"',
+					title, pubdate_str)
 
 		elif line.startswith('tags:') and cls is russell.content.Post:
 			kwargs['tags'] = [make_tag(tag) for tag in line[5:].strip().split(',')]
