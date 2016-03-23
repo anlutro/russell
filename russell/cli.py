@@ -39,7 +39,13 @@ def get_args(args=None):
 	generate_parser.add_argument('-d', '--dist-path')
 	generate_parser.add_argument('-r', '--root-url')
 
-	return parser.parse_args(args)
+	args = parser.parse_args(args)
+
+	if not args.command:
+		parser.print_help()
+		parser.exit()
+
+	return args
 
 
 def get_config(args):
