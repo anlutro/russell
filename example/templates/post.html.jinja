@@ -1,0 +1,29 @@
+{% extends 'layout.html.jinja' %}
+
+{% block body_class %}single single-post{% endblock %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block description %}{{ post.description }}{% endblock %}
+
+{% block content %}
+	<article class="post">
+		<header class="post-header">
+			<span class="post-pubdate">{{ post.pubdate.strftime('%B %-d, %Y') }}</span>
+			<h2 class="post-title">
+				{{ post.title }}
+			{%- if post.subtitle %}
+				<small>{{ post.subtitle }}</small>
+			{%- endif %}
+			</h2>
+		</header>
+		<div class="post-body">
+			{{ post.body }}
+		</div>
+		<footer class="post-footer">
+			{% if post.tags %}
+			<p class="post-tags">
+				Tags: {{ post.tag_links | join(', ') }}
+			</p>
+			{% endif %}
+		</footer>
+	</article>
+{% endblock %}

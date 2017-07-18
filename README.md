@@ -4,7 +4,8 @@ A static HTML site generator written in Python 3.
 
 ## Installation
 
-	pip install russell
+	$ pipsi install russell
+	$ pip install --user russell
 
 I recommend either running the command with `--user`, or to create a virtualenv
 and run the command with the virtualenv activated.
@@ -23,15 +24,10 @@ resulting .html file will be named.
 
 ### Generating the blog
 
-In a directory with a `russell.yml` config file, running `russell generate` will
-read all pages and posts, convert it into HTML and place it in the `dist`
-directory by default.
+`russell generate` will create a file `run.py` which you can invoke to generate
+your static site.
 
-After doing this, you probably want to add your own files like a CSS stylesheet.
-Russell will not manage this bit for you.
-
-You can override the root URL (used in generated links) with the `root-url`
-option: `russell generate --root-url=http://localhost:8080`
+To test your newly generated site, run `russell serve`.
 
 ### Templating
 

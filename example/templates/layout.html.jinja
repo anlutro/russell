@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>{% block title %}{% endblock %} - {{ site_title }}</title>
+	<meta name="description" content="{% block description %}{{ site_description }}{% endblock %}">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="alternate" type="application/rss+xml" href="{{ root_url }}/rss.xml" title="{{ site_title }} - RSS feed">
+	<link rel="stylesheet" href="{{ asset_url('style.css') }}">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,400italic,600" rel="stylesheet" type="text/css">
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+<div class="site-container">
+	<main class="main">
+	{% block content %}{% endblock %}
+	</main>
+	<section class="sidebar">
+		<h1 class="site-title"><a href="{{ root_url }}">Russell</a></h1>
+
+		<aside class="menu">
+			<ul>
+				<li>{{ a('Russell on GitHub', 'https://github.com/anlutro/russell', blank=true) }}</li>
+				<li><a href="{{ root_url }}/rss.xml">RSS feed</a></li>
+			</ul>
+		</aside>
+
+		<aside class="tag_cloud">
+			<h2>Tags</h2>
+			<div class="tags">
+			{%- for tag in tags | sort(attribute='slug') %}
+				<a href="{{ tag.url }}" class="tag">{{ tag.title }}</a>
+			{%- endfor %}
+			</div>
+		</aside>
+
+	</section>
+
+	<footer class="footer">
+		<p>
+			{{ now.strftime('%Y') }} &copy; Russell
+		</p>
+	</footer>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+Jinja2>=2.8,<=3
+Markdown>=2.6,<=3
+PyRSS2Gen>=1.1,<=2
+python-dateutil>=2.6,<3
+python-slugify>=1.2,<=2
+PyYAML>=3.11,<=4

@@ -1,0 +1,29 @@
+{% extends 'layout.html.jinja' %}
+
+{% block title %}Archives{% endblock %}
+
+{% block content %}
+{% for post in posts %}
+	<article class="post">
+		<header class="post-header">
+			<span class="post-pubdate">{{ post.pubdate.strftime('%B %-d, %Y') }}</span>
+			<h2 class="post-title">
+				<a href="{{ root_url }}/posts/{{ post.slug }}">{{ post.title }}</a>
+			{%- if post.subtitle %}
+				<small>{{ post.subtitle }}</small>
+			{%- endif %}
+			</h2>
+		</header>
+		<div class="post-body">
+			{{ post.excerpt }}
+		</div>
+		<footer class="post-footer">
+			{% if post.tags %}
+			<p class="post-tags">
+				Tags: {{ post.tag_links | join(', ') }}
+			</p>
+			{% endif %}
+		</footer>
+	</article>
+{% endfor %}
+{% endblock %}
