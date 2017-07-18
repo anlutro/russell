@@ -10,7 +10,23 @@ import subprocess
 def setup(dest):
 	module_root = os.path.dirname(os.path.dirname(__file__))
 	example_dir = os.path.join(module_root, 'example')
-	shutil.copytree(example_dir, dest)
+
+	if os.path.exists(dest):
+		def iter_copy(src_dir, dest_dir):
+			for item in os.listdir(src_dir):
+				src_path = os.path.join(src_dir, item)
+				dest_path = os.path.join(dest_dir, item)
+				if os.path.exists(dest_path):
+					continue
+				if os.path.isdir(src_path):
+					shutil.copytree(src_path, dest_path)
+				else:
+					shutil.copy(os.path.join(example_dir, item), os.path.join(dest, item))
+		iter_copy(example_dir, dest)
+	else:
+		shutil.copytree(example_dir, dest)
+		subprocess.check_call(['python3', '-m', 'venv', os.path.join(dest, '.venv')])
+		subprocess.check_call([os.path.join(dest, '.venv', 'bin', 'pip'), 'install', '-r', os.path.join(dest, 'requirements.txt')])
 
 
 def new_page(title):

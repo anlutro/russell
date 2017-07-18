@@ -4,11 +4,22 @@ A static HTML site generator written in Python 3.
 
 ## Installation
 
-	$ pipsi install russell
-	$ pip install --user russell
+The recommended way to install Russell is to first create a virtualenv and install russell:
 
-I recommend either running the command with `--user`, or to create a virtualenv
-and run the command with the virtualenv activated.
+	$ mkdir /home/myuser/blog
+	$ cd /home/myuser/blog
+	$ python3 -m venv .venv
+	$ source ./.venv/bin/activate
+	$ pip install russell
+
+Once that's done, you can either manually create the required files, or let Russell set up an example project for you:
+
+	$ russell setup .
+
+Alternatively, you can install russell globally and let it create the virtualenv for you. Outside of any virtualenv:
+
+	$ pip install --user russell
+	$ ~/.local/bin/russell setup /home/myuser/blog
 
 ## Usage
 
