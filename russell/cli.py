@@ -34,12 +34,12 @@ def new_post(title):
 
 
 def generate():
-	subprocess.run(['python', 'run.py'])
+	subprocess.check_call(['python', 'run.py'])
 
 
 def serve():
 	try:
-		subprocess.run(['sh', '-c', 'cd dist && python -m http.server'])
+		subprocess.check_call(['sh', '-c', 'cd dist && python -m http.server'])
 	except KeyboardInterrupt:
 		pass
 
