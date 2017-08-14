@@ -117,7 +117,7 @@ class Entry(Content):
 
 		elif line.startswith('private:'):
 			try:
-				kwargs['private'] = not _str_to_bool(line[7:])
+				kwargs['public'] = not _str_to_bool(line[8:])
 			except ValueError:
 				LOG.warning('invalid boolean value for private', exc_info=True)
 
