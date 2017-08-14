@@ -1,5 +1,5 @@
 from datetime import datetime
-from russell.content import ContentManager, Post, Page
+from russell.content import ContentManager, Post, Page, Tag
 
 
 def test_basic_parsing():
@@ -23,6 +23,17 @@ def test_tag_parsing():
 	assert post.title == 'Hello world!'
 	assert [tag.title for tag in post.tags] == ['Foo Bar', 'Bar Baz']
 	assert post.body == '<p>This is a test post.</p>'
+
+
+def test_public_parsing():
+	md = '# Hello world!\npublic: false\n\nThis is a test post.'
+	post = Post.from_string(md)
+	assert post.public == False
+
+def test_private_parsing():
+	md = '# Hello world!\nprivate: true\n\nThis is a test post.'
+	post = Post.from_string(md)
+	assert post.public == False
 
 
 def test_excerpt():
@@ -85,3 +96,9 @@ def test_post_sort_pubdate():
 	assert posts[0].title == 'c'
 	assert posts[1].title == 'a'
 	assert posts[2].title == 'b'
+
+
+def test_tag_sorting():
+	tags = sorted([Tag('b'), Tag('a')])
+	assert tags[0].title == 'a'
+	assert tags[1].title == 'b'
