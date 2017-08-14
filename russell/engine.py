@@ -24,12 +24,6 @@ def _listfiles(root_dir):
 	return results
 
 
-def _parse_data_file(path):
-	if path.endswith('.yaml') or path.endswith('.yml'):
-		return yaml.load(open(path, 'r'))
-	raise ValueError('Do not know how to parse data file: ' + path)
-
-
 def _rss_item(post):
 	return PyRSS2Gen.RSSItem(
 		title=post.title,
@@ -51,13 +45,14 @@ class BlogEngine:
 		self.posts = self.cm.posts
 		self.tags = self.cm.tags
 
-		self.data = {}
+		self.asset_hash = {}
 
 		self.jinja = jinja2.Environment(
 			loader=jinja2.FileSystemLoader(os.path.join(root_path, 'templates')),
 		)
 		self.jinja.globals.update({
 			'a': self.get_link,
+			'asset_hash': self.asset_hash,
 			'asset_url': self.get_asset_url,
 			'now': datetime.now(),
 			'root_url': self.root_url,
@@ -68,8 +63,8 @@ class BlogEngine:
 
 	def get_asset_url(self, path):
 		url = self.root_url + '/assets/' + path
-		if 'asset_hash' in self.data and path in self.data['asset_hash']:
-			url += '?' + self.data['asset_hash'][path]
+		if path in self.asset_hash:
+			url += '?' + self.asset_hash[path]
 		return url
 
 	def get_link(self, title, url, blank=None):
@@ -96,32 +91,17 @@ class BlogEngine:
 			for file in _listfiles(path)
 		])
 
-	def add_data_files(self, path='data'):
-		path = os.path.join(self.root_path, path)
-		for file in os.listdir(path):
-			file_path = os.path.join(path, file)
-			if not os.path.isfile(file_path):
-				continue
-			key = file.split('.')[0]
-			self.data[key] = _parse_data_file(file_path)
-			self.jinja.globals[key] = self.data[key]
-
 	def add_assets(self, path='assets'):
 		for root, dirs, files in os.walk(path):
 		    for file in files:
 	             print(os.path.join(root, file))
 
 	def add_asset_hashes(self, path='dist/assets'):
-		if 'asset_hash' not in self.data:
-			self.data['asset_hash'] = {}
-		if 'asset_hash' not in self.jinja.globals:
-			self.jinja.globals['asset_hash'] = {}
 		for fullpath in _listfiles(os.path.join(self.root_path, path)):
 			relpath = fullpath.replace(self.root_path + '/' + path + '/', '')
 			md5sum = hashlib.md5(open(fullpath, 'rb').read()).hexdigest()
 			LOG.debug('MD5 of %s (%s): %s', fullpath, relpath, md5sum)
-			self.data['asset_hash'][relpath] = md5sum
-			self.jinja.globals['asset_hash'][relpath] = md5sum
+			self.asset_hash[relpath] = md5sum
 
 	def get_posts(self, num=None, tag=None, private=False):
 		posts = self.posts.copy()
