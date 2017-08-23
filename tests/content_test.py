@@ -1,5 +1,5 @@
 from datetime import datetime
-from russell.content import ContentManager, Post, Page, Tag
+from russell.content import ContentManager, Post, Page, Tag, CaseInsensitiveDict
 
 
 def test_basic_parsing():
@@ -102,3 +102,10 @@ def test_tag_sorting():
 	tags = sorted([Tag('b'), Tag('a')])
 	assert tags[0].title == 'a'
 	assert tags[1].title == 'b'
+
+
+def test_case_insensitive_dict():
+	d = CaseInsensitiveDict({'a': True})
+	assert 'a' in d
+	assert 'A' in d
+	assert 'b' not in d

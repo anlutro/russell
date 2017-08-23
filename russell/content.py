@@ -210,6 +210,17 @@ class Tag(Content):
 		return self.title < other.title
 
 
+class CaseInsensitiveDict(dict):
+	def __setitem__(self, key, value):
+		super().__setitem__(key.lower(), value)
+
+	def __getitem__(self, key):
+		return super().__getitem__(key.lower())
+
+	def __contains__(self, key):
+		return super().__contains__(key.lower())
+
+
 class ContentManager:
 	def __init__(self, root_url):
 		self.Page = type('CM_Page', (Page,), {'cm': self})
@@ -219,7 +230,7 @@ class ContentManager:
 		self.pages = []
 		self.posts = []
 		self.tags = []
-		self.tags_dict = {}
+		self.tags_dict = CaseInsensitiveDict()
 
 	def make_tag(self, tag_name):
 		tag_name = tag_name.strip()
