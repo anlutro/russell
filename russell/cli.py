@@ -41,8 +41,8 @@ def new_page(title):
 	if os.path.exists(path):
 		print(path, 'already exists!')
 		return
-	with open(path, 'w+') as f:
-		f.write('# %s\n\nPage body here' % title)
+	with open(path, 'w+') as page_file:
+		page_file.write('# %s\n\nPage body here' % title)
 
 
 def new_post(title):
@@ -52,8 +52,8 @@ def new_post(title):
 		return
 	now = datetime.datetime.now()
 	pubdate = now.strftime('%Y-%m-%d %H:%M %Z')
-	with open(path, 'w+') as f:
-		f.write('# %s\npubdate: %s\n\nPost body here' % (title, pubdate))
+	with open(path, 'w+') as post_file:
+		post_file.write('# %s\npubdate: %s\n\nPost body here' % (title, pubdate))
 
 
 def generate():
