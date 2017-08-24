@@ -1,2 +1,2 @@
-include reqiurements.txt
+include requirements.txt
 recursive-include example *
