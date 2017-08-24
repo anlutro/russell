@@ -1,0 +1,2 @@
+include reqiurements.txt
+recursive-include example *

@@ -10,7 +10,8 @@ if sys.version_info[0] != 3:
     sys.exit(1)
 
 def read_requirements(path='requirements.txt'):
-    with open(path, 'r') as f:
+    fullpath = os.path.join(os.path.dirname(__file__), path)
+    with open(fullpath, 'r') as f:
         lines = f.readlines()
     lines = [l.strip() for l in lines if l]
     return [l for l in lines if l]
@@ -18,7 +19,7 @@ def read_requirements(path='requirements.txt'):
 setup(
     name='russell',
     packages=['russell'],
-    version='0.5.1',
+    version='0.5.2',
     license='MIT',
     description='A static HTML blog generator.',
     author='Andreas Lutro',
