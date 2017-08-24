@@ -91,7 +91,7 @@ class BlogEngine:
 		])
 
 	def add_assets(self, path='assets'):
-		for root, dirs, files in os.walk(path):
+		for root, _, files in os.walk(path):
 			for file in files:
 				 print(os.path.join(root, file))
 
