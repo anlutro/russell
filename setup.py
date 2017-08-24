@@ -18,7 +18,7 @@ def read_requirements(path='requirements.txt'):
 setup(
     name='russell',
     packages=['russell'],
-    version='0.5.0',
+    version='0.5.1',
     license='MIT',
     description='A static HTML blog generator.',
     author='Andreas Lutro',
