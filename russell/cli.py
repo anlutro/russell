@@ -3,8 +3,9 @@ import datetime
 import os
 import os.path
 import shutil
-import slugify
 import subprocess
+
+import slugify
 
 
 def setup(dest):
@@ -43,7 +44,7 @@ def new_page(title):
 	now = datetime.datetime.now()
 	pubdate = now.strftime('%Y-%m-%d %H:%M %Z')
 	with open(path, 'w+') as f:
-		f.write('# %s\npubdate: %s\n\nPost body here' % (title, pubdate))
+		f.write('# %s\n\nPage body here' % title)
 
 
 def new_post(title):
@@ -52,7 +53,7 @@ def new_post(title):
 		print(path, 'already exists!')
 		return
 	with open(path, 'w+') as f:
-		f.write('# %s\n\nPage body here' % title)
+		f.write('# %s\npubdate: %s\n\nPost body here' % (title, pubdate))
 
 
 def generate():
