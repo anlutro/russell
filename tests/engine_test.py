@@ -1,6 +1,6 @@
 import os.path
 import pytest
-from russell.engine import BlogEngine
+from russell.engine import BlogEngine, make_link
 
 
 @pytest.fixture
@@ -9,10 +9,10 @@ def engine():
 	return BlogEngine(root_path, '//localhost', 'Test Blog')
 
 
-def test_get_link(engine):
-	assert '<a href="/test">Test</a>' == engine.get_link('Test', '/test')
-	assert '<a href="http://test">Test</a>' == engine.get_link('Test', 'http://test')
-	assert '<a href="http://test" target="_blank" rel="noopener noreferrer">Test</a>' == engine.get_link('Test', 'http://test', blank=True)
+def test_make_link(engine):
+	assert '<a href="/test">Test</a>' == make_link('Test', '/test')
+	assert '<a href="http://test">Test</a>' == make_link('Test', 'http://test')
+	assert '<a href="http://test" target="_blank" rel="noopener noreferrer">Test</a>' == make_link('Test', 'http://test', blank=True)
 
 
 def test_get_asset_link(engine):

@@ -32,6 +32,13 @@ def _rss_item(post):
 	)
 
 
+def make_link(title, url, blank=None):
+	attrs = 'href="{}"'.format(url)
+	if blank:
+		attrs += ' target="_blank" rel="noopener noreferrer"'
+	return '<a {}>{}</a>'.format(attrs, title)
+
+
 class BlogEngine:
 	def __init__(self, root_path, root_url, site_title, site_desc=None):
 		self.root_path = root_path
@@ -50,7 +57,7 @@ class BlogEngine:
 			loader=jinja2.FileSystemLoader(os.path.join(root_path, 'templates')),
 		)
 		self.jinja.globals.update({
-			'a': self.get_link,
+			'a': make_link,
 			'asset_hash': self.asset_hash,
 			'asset_url': self.get_asset_url,
 			'now': datetime.now(),
@@ -65,12 +72,6 @@ class BlogEngine:
 		if path in self.asset_hash:
 			url += '?' + self.asset_hash[path]
 		return url
-
-	def get_link(self, title, url, blank=None):
-		attrs = 'href="{}"'.format(url)
-		if blank:
-			attrs += ' target="_blank" rel="noopener noreferrer"'
-		return '<a {}>{}</a>'.format(attrs, title)
 
 	def add_pages(self, path='pages'):
 		pages_path = os.path.join(self.root_path, path)
