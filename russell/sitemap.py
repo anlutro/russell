@@ -3,9 +3,9 @@ import re
 
 
 def text_element(tag, text):
-	el = etree.Element(tag)
-	el.text = text
-	return el
+	elem = etree.Element(tag)
+	elem.text = text
+	return elem
 
 
 class SitemapGenerator:
@@ -29,29 +29,29 @@ class SitemapGenerator:
 		return etree.tostring(tree, 'utf-8')
 
 	def get_post_element(self, post):
-		el = etree.Element('url')
-		el.append(text_element('loc', self.normalize_url(post.url)))
-		el.append(text_element('lastmod', post.pubdate.strftime('%Y-%m-%d')))
-		el.append(text_element('changefreq', 'monthly'))
-		return el
+		elem = etree.Element('url')
+		elem.append(text_element('loc', self.normalize_url(post.url)))
+		elem.append(text_element('lastmod', post.pubdate.strftime('%Y-%m-%d')))
+		elem.append(text_element('changefreq', 'monthly'))
+		return elem
 
 	def get_page_element(self, page):
-		el = etree.Element('url')
-		el.append(text_element('loc', self.normalize_url(page.url)))
-		el.append(text_element('changefreq', 'monthly'))
-		return el
+		elem = etree.Element('url')
+		elem.append(text_element('loc', self.normalize_url(page.url)))
+		elem.append(text_element('changefreq', 'monthly'))
+		return elem
 
 	def get_tag_element(self, tag):
-		el = etree.Element('url')
-		el.append(text_element('loc', self.normalize_url(tag.url)))
-		el.append(text_element('changefreq', 'weekly'))
-		return el
+		elem = etree.Element('url')
+		elem.append(text_element('loc', self.normalize_url(tag.url)))
+		elem.append(text_element('changefreq', 'weekly'))
+		return elem
 
 	def get_index_element(self, url):
-		el = etree.Element('url')
-		el.append(text_element('loc', self.normalize_url(url)))
-		el.append(text_element('changefreq', 'daily'))
-		return el
+		elem = etree.Element('url')
+		elem.append(text_element('loc', self.normalize_url(url)))
+		elem.append(text_element('changefreq', 'daily'))
+		return elem
 
 
 def generate_sitemap(blog, https=True):
