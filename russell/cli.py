@@ -21,12 +21,18 @@ def setup(dest):
 				if os.path.isdir(src_path):
 					shutil.copytree(src_path, dest_path)
 				else:
-					shutil.copy(os.path.join(example_dir, item), os.path.join(dest, item))
+					shutil.copy(
+						os.path.join(example_dir, item),
+						os.path.join(dest, item)
+					)
 		iter_copy(example_dir, dest)
 	else:
 		shutil.copytree(example_dir, dest)
 		subprocess.check_call(['python3', '-m', 'venv', os.path.join(dest, '.venv')])
-		subprocess.check_call([os.path.join(dest, '.venv', 'bin', 'pip'), 'install', '-r', os.path.join(dest, 'requirements.txt')])
+		subprocess.check_call([
+			os.path.join(dest, '.venv', 'bin', 'pip'),
+			'install', '-r', os.path.join(dest, 'requirements.txt'),
+		])
 
 
 def new_page(title):
