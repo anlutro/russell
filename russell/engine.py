@@ -6,7 +6,6 @@ import os.path
 
 import jinja2
 import PyRSS2Gen
-import yaml
 
 import russell.content
 import russell.sitemap
