@@ -161,7 +161,7 @@ class BlogEngine:
 	def generate_rss(self, path='rss.xml'):
 		rss = PyRSS2Gen.RSS2(
 			title=self.site_title,
-			description='',
+			description=self.site_desc or '',
 			link=self.root_url,
 			lastBuildDate=datetime.now(),
 			items=[_rss_item(post) for post in self.get_posts()],
