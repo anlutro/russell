@@ -94,7 +94,7 @@ class BlogEngine:
 	def add_assets(self, path='assets'):
 		for root, _, files in os.walk(path):
 			for file in files:
-				 print(os.path.join(root, file))
+				print(os.path.join(root, file))
 
 	def add_asset_hashes(self, path='dist/assets'):
 		for fullpath in _listfiles(os.path.join(self.root_path, path)):
