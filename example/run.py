@@ -21,7 +21,7 @@ blog.add_pages()
 blog.add_posts()
 
 # copy and generate assets
-blog.add_assets()
+blog.copy_assets()
 blog.write_file('assets/style.css', sass.compile(
 	filename=os.path.join(ROOT_DIR, 'style.sass')
 ))

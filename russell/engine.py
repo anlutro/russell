@@ -3,6 +3,7 @@ import hashlib
 import logging
 import os
 import os.path
+import shutil
 
 import jinja2
 import PyRSS2Gen
@@ -91,10 +92,15 @@ class BlogEngine:
 			for file in _listfiles(path)
 		])
 
-	def add_assets(self, path='assets'):
-		for root, _, files in os.walk(path):
+	def copy_assets(self, path='assets'):
+		assets_path = os.path.abspath(path)
+		for root, _, files in os.walk(assets_path):
 			for file in files:
-				print(os.path.join(root, file))
+				fullpath = os.path.join(root, file)
+				relpath = os.path.relpath(fullpath, assets_path)
+				copy_to = os.path.join(self._get_dist_path(relpath, dir='assets'))
+				LOG.debug('copying %r to %r', fullpath, copy_to)
+				shutil.copyfile(fullpath, copy_to)
 
 	def add_asset_hashes(self, path='dist/assets'):
 		for fullpath in _listfiles(os.path.join(self.root_path, path)):
