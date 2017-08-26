@@ -181,7 +181,7 @@ class Post(Entry):
 
 		elif line.startswith('tags:'):
 			line_tags = line[5:].strip().split(',')
-			kwargs['tags'] = [cls.make_tag(tag) for tag in line_tags]
+			kwargs['tags'] = [cls.make_tag(tag) for tag in line_tags if tag]
 
 	@property
 	def url(self):
@@ -199,6 +199,8 @@ class Post(Entry):
 
 class Tag(Content):
 	def __init__(self, title, slug=None):
+		if not title:
+			raise ValueError('cannot create Tag with empty title')
 		self.title = title
 		self.slug = slug or slugify.slugify(title)
 

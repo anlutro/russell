@@ -25,6 +25,12 @@ def test_tag_parsing():
 	assert post.body == '<p>This is a test post.</p>'
 
 
+def test_empty_tags_parsing():
+	md = '# Hello world!\ntags:\n\nThis is a test post.'
+	post = Post.from_string(md)
+	assert post.tags == []
+
+
 def test_public_parsing():
 	md = '# Hello world!\npublic: false\n\nThis is a test post.'
 	post = Post.from_string(md)
