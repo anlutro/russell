@@ -24,10 +24,16 @@ def _listfiles(root_dir):
 	return results
 
 
-def _rss_item(post):
+def _rss_item(post, only_excerpt=True):
+	if only_excerpt:
+		read_more = 'Read the full article at %s' % post.url
+		body = '<p>%s</p><p>%s</p>' % (post.excerpt, read_more)
+	else:
+		body = post.body
+
 	return PyRSS2Gen.RSSItem(
 		title=post.title,
-		description=post.excerpt,
+		description=body,
 		link=post.url,
 		pubDate=post.pubdate,
 	)
@@ -164,13 +170,18 @@ class BlogEngine:
 	def generate_archive(self):
 		self.generate_page('archive', template='archive.html.jinja', posts=self.get_posts())
 
-	def generate_rss(self, path='rss.xml'):
+	def generate_rss(self, path='rss.xml', only_excerpt=True):
+		items = (
+			_rss_item(post, only_excerpt=only_excerpt)
+			for post in self.get_posts()
+		)
+
 		rss = PyRSS2Gen.RSS2(
 			title=self.site_title,
 			description=self.site_desc or '',
 			link=self.root_url,
 			lastBuildDate=datetime.now(),
-			items=[_rss_item(post) for post in self.get_posts()],
+			items=items,
 		)
 
 		path = self._get_dist_path(path)
