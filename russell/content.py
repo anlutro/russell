@@ -2,11 +2,14 @@ from datetime import datetime
 import logging
 import os.path
 
+import time
 import dateutil.parser
+import dateutil.tz
 import markdown
 import slugify
 
 LOG = logging.getLogger(__name__)
+SYSTEM_TZINFO = dateutil.tz.tzlocal()
 
 
 def _get_excerpt(body):
@@ -177,7 +180,9 @@ class Post(Entry):
 			except ValueError:
 				LOG.warning('invalid pubdate given', exc_info=True)
 			if 'pubdate' in kwargs and not kwargs['pubdate'].tzinfo:
-				LOG.warning('found pubdate without timezone: "%s"', pubdate_str)
+				kwargs['pubdate'] = kwargs['pubdate'].replace(tzinfo=SYSTEM_TZINFO)
+				LOG.warning('found pubdate without timezone: %r - using %r',
+					pubdate_str, SYSTEM_TZINFO)
 
 		elif line.startswith('tags:'):
 			line_tags = line[5:].strip().split(',')

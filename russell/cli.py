@@ -5,6 +5,7 @@ import os.path
 import shutil
 import subprocess
 
+import dateutil.tz
 import slugify
 
 
@@ -50,7 +51,7 @@ def new_post(title):
 	if os.path.exists(path):
 		print(path, 'already exists!')
 		return
-	now = datetime.datetime.now()
+	now = datetime.datetime.now(dateutil.tz.tzlocal())
 	pubdate = now.strftime('%Y-%m-%d %H:%M %Z')
 	with open(path, 'w+') as post_file:
 		post_file.write('# %s\npubdate: %s\n\nPost body here' % (title, pubdate))
