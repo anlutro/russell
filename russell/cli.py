@@ -74,10 +74,13 @@ def main():
 	setup_parser = cmd_subparsers.add_parser('setup')
 	setup_parser.add_argument('dir')
 
-	new_page_parser = cmd_subparsers.add_parser('new-page')
+	new_parser = cmd_subparsers.add_parser('new')
+	new_subparsers = new_parser.add_subparsers(dest='new_type')
+
+	new_page_parser = new_subparsers.add_parser('page')
 	new_page_parser.add_argument('title')
 
-	new_post_parser = cmd_subparsers.add_parser('new-post')
+	new_post_parser = new_subparsers.add_parser('post')
 	new_post_parser.add_argument('title')
 
 	generate_parser = cmd_subparsers.add_parser('generate')
@@ -90,10 +93,11 @@ def main():
 
 	if args.command == 'setup':
 		return setup(args.dir)
-	if args.command == 'new-page':
-		return new_page(args.title)
-	if args.command == 'new-post':
-		return new_post(args.title)
+	if args.command == 'new':
+		if args.new_type == 'page':
+			return new_page(args.title)
+		if args.new_type == 'post':
+			return new_post(args.title)
 	if args.command == 'generate':
 		return generate()
 	if args.command == 'serve':

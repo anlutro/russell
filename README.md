@@ -28,9 +28,9 @@ structure in the current working directory to get you started.
 
 ### Creating pages/posts
 
-`russell new-page "My Test Page"` will create the file 'pages/my-test-page.md',
+`russell new page "My Test Page"` will create the file 'pages/my-test-page.md',
 which you can then open in your favourite text editor. The process is the same
-for `russell new-post`. You can change the filename yourself to modify what the
+for `russell new post`. You can change the filename yourself to modify what the
 resulting .html file will be named.
 
 ### Generating the blog
