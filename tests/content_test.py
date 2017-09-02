@@ -13,7 +13,8 @@ def test_pubdate_parsing():
 	md = '# Hello world!\npubdate:2015-01-01 01:23:45\n\nThis is a test post.'
 	post = Post.from_string(md)
 	assert post.title == 'Hello world!'
-	assert post.pubdate.isoformat() == '2015-01-01T01:23:45'
+	# we don't know what the timezone at the end will be
+	assert post.pubdate.isoformat().startswith('2015-01-01T01:23:45+')
 	assert post.body == '<p>This is a test post.</p>'
 
 
