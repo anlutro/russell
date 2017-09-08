@@ -31,6 +31,8 @@ def setup(dest):
 	else:
 		shutil.copytree(example_dir, dest)
 		subprocess.check_call(['python3', '-m', 'venv', os.path.join(dest, '.venv')])
+		# this shouldn't be necessary, but seems to be in travis-ci
+		subprocess.check_call([os.path.join(dest, '.venv', 'bin', 'python'), '-m', 'ensurepip'])
 		subprocess.check_call([
 			os.path.join(dest, '.venv', 'bin', 'pip'),
 			'install', '-r', os.path.join(dest, 'requirements.txt'),
