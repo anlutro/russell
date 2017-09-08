@@ -68,7 +68,7 @@ def serve():
 		pass
 
 
-def parse_args(args=None):
+def get_parser():
 	parser = argparse.ArgumentParser('russell')
 	cmd_subparsers = parser.add_subparsers(dest='command')
 
@@ -88,11 +88,18 @@ def parse_args(args=None):
 
 	serve_parser = cmd_subparsers.add_parser('serve')
 
+	return parser
+
+
+def parse_args(parser=None, args=None):
+	parser = parser or get_parser()
 	return parser.parse_args(args)
 
 
 def main(args=None):
-	args = parse_args(args)
+	parser = get_parser()
+	args = parse_args(parser)
+
 	if not args.command:
 		return parser.print_help()
 
