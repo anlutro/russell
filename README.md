@@ -49,7 +49,7 @@ Read the Jinja2 documentation here: http://jinja.pocoo.org/
 `root_url` has been added as a global variable, which you can use for generating
 URLs in your template.
 
-The "home" and "archive" templates have the `posts` variable available. The
+The "index" and "archive" templates have the `posts` variable available. The
 "post" template has the `post` variable and "page" has the `page` variable.
 `posts` is an array of `Post` objects, the others are a single instance of
 either `Post` or `Page`.
