@@ -6,10 +6,10 @@ import os.path
 import re
 import shutil
 
-from feedgen.feed import FeedGenerator
 import jinja2
 
 import russell.content
+import russell.feed
 import russell.sitemap
 
 LOG = logging.getLogger(__name__)
@@ -157,31 +157,8 @@ class BlogEngine:
 		self.generate_page('archive', template='archive.html.jinja', posts=self.get_posts())
 
 	def generate_rss(self, path='rss.xml', only_excerpt=True, https=False):
-		fg = FeedGenerator()
-
-		root_href = russell.content._schema_url(self.root_url, https)
-		fg.id(root_href)
-		fg.link(href=root_href, rel='alternate')
-		fg.title(self.site_title)
-		fg.subtitle(self.site_desc or '')
-
-		for post in self.get_posts():
-			if only_excerpt:
-				read_more = 'Read the full article at <a href="%s" target="_blank">%s</a>' % (post.url, post.url)
-				body = '<p>%s</p><p>%s</p>' % (post.excerpt, read_more)
-			else:
-				body = post.body
-
-			post_href = russell.content._schema_url(post.url, https=https)
-
-			fe = fg.add_entry()
-			fe.id(post_href)
-			fe.link(href=post_href, rel='alternate')
-			fe.title(post.title)
-			fe.description(body)
-			fe.published(post.pubdate)
-
-		fg.rss_file(self._get_dist_path(path))
+		feed = russell.feed.get_rss_feed(self, only_excerpt=only_excerpt, https=https)
+		feed.rss_file(self._get_dist_path(path))
 
 	def generate_sitemap(self, https=False):
 		sitemap = russell.sitemap.generate_sitemap(self, https=https)
