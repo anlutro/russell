@@ -33,7 +33,7 @@ def _rss_item(post, only_excerpt=True):
 
 	return PyRSS2Gen.RSSItem(
 		title=post.title,
-		description=body,
+		description='%s%s%s' % ('<![CDATA[', body, ']]'),
 		link=post.url,
 		pubDate=post.pubdate,
 	)
