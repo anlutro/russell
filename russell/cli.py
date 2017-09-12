@@ -44,6 +44,7 @@ def new_page(title):
 		return
 	with open(path, 'w+') as page_file:
 		page_file.write('# %s\n\nPage body here' % title)
+	print('Created new page in', path)
 
 
 def new_post(title):
@@ -55,6 +56,7 @@ def new_post(title):
 	pubdate = now.strftime('%Y-%m-%d %H:%M %Z')
 	with open(path, 'w+') as post_file:
 		post_file.write('# %s\npubdate: %s\n\nPost body here' % (title, pubdate))
+	print('Created new post in', path)
 
 
 def generate():
