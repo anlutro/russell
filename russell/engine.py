@@ -3,10 +3,11 @@ import hashlib
 import logging
 import os
 import os.path
+import re
 import shutil
 
+from feedgen.feed import FeedGenerator
 import jinja2
-import PyRSS2Gen
 
 import russell.content
 import russell.sitemap
@@ -24,7 +25,7 @@ def _listfiles(root_dir):
 	return results
 
 
-def _rss_item(post, only_excerpt=True):
+def _rss_item(post, only_excerpt=True, https=True):
 	if only_excerpt:
 		read_more = 'Read the full article at %s' % post.url
 		body = '<p>%s</p><p>%s</p>' % (post.excerpt, read_more)
@@ -33,8 +34,8 @@ def _rss_item(post, only_excerpt=True):
 
 	return PyRSS2Gen.RSSItem(
 		title=post.title,
-		description='%s%s%s' % ('<![CDATA[', body, ']]'),
-		link=post.url,
+		description=body,
+		link=russell.content._schema_url(post.url, https=https),
 		pubDate=post.pubdate,
 	)
 
@@ -170,25 +171,32 @@ class BlogEngine:
 	def generate_archive(self):
 		self.generate_page('archive', template='archive.html.jinja', posts=self.get_posts())
 
-	def generate_rss(self, path='rss.xml', only_excerpt=True):
-		items = (
-			_rss_item(post, only_excerpt=only_excerpt)
-			for post in self.get_posts()
-		)
+	def generate_rss(self, path='rss.xml', only_excerpt=True, https=False):
+		fg = FeedGenerator()
 
-		rss = PyRSS2Gen.RSS2(
-			title=self.site_title,
-			description=self.site_desc or '',
-			link=self.root_url,
-			lastBuildDate=datetime.now(),
-			items=items,
-		)
+		root_href = russell.content._schema_url(self.root_url, https)
+		fg.id(root_href)
+		fg.link(href=root_href, rel='alternate')
+		fg.title(self.site_title)
+		fg.subtitle(self.site_desc or '')
 
-		path = self._get_dist_path(path)
-		if not os.path.isdir(os.path.dirname(path)):
-			os.makedirs(os.path.dirname(path))
-		with open(path, 'w+') as file:
-			rss.write_xml(file)
+		for post in self.get_posts():
+			if only_excerpt:
+				read_more = 'Read the full article at <a href="%s" target="_blank">%s</a>' % (post.url, post.url)
+				body = '<p>%s</p><p>%s</p>' % (post.excerpt, read_more)
+			else:
+				body = post.body
+
+			post_href = russell.content._schema_url(post.url, https=https)
+
+			fe = fg.add_entry()
+			fe.id(post_href)
+			fe.link(href=post_href, rel='alternate')
+			fe.title(post.title)
+			fe.description(body)
+			fe.published(post.pubdate)
+
+		fg.rss_file(self._get_dist_path(path))
 
 	def generate_sitemap(self, https=False):
 		sitemap = russell.sitemap.generate_sitemap(self, https=https)

@@ -1,6 +1,7 @@
 from datetime import datetime
 import logging
 import os.path
+import re
 
 import time
 import dateutil.parser
@@ -10,6 +11,14 @@ import slugify
 
 LOG = logging.getLogger(__name__)
 SYSTEM_TZINFO = dateutil.tz.tzlocal()
+
+
+def _schema_url(url, https=False):
+	return re.sub(
+		r'^\/\/',
+		('https' if https else 'http') + '://',
+		url
+	)
 
 
 def _get_excerpt(body):
