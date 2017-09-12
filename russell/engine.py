@@ -25,21 +25,6 @@ def _listfiles(root_dir):
 	return results
 
 
-def _rss_item(post, only_excerpt=True, https=True):
-	if only_excerpt:
-		read_more = 'Read the full article at %s' % post.url
-		body = '<p>%s</p><p>%s</p>' % (post.excerpt, read_more)
-	else:
-		body = post.body
-
-	return PyRSS2Gen.RSSItem(
-		title=post.title,
-		description=body,
-		link=russell.content._schema_url(post.url, https=https),
-		pubDate=post.pubdate,
-	)
-
-
 def make_link(title, url, blank=None):
 	attrs = 'href="{}"'.format(url)
 	if blank:
