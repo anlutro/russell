@@ -47,15 +47,20 @@ def new_page(title):
 	print('Created new page in', path)
 
 
-def new_post(title):
-	path = os.path.join('posts', slugify.slugify(title) + '.md')
+def new_post(title, draft=False, tags=None, subtitle=None):
+	path = os.path.join('drafts' if draft else 'posts', slugify.slugify(title) + '.md')
 	if os.path.exists(path):
 		print(path, 'already exists!')
 		return
 	now = datetime.datetime.now(dateutil.tz.tzlocal())
-	pubdate = now.strftime('%Y-%m-%d %H:%M %Z')
+	data = {'pubdate': now.strftime('%Y-%m-%d %H:%M %Z')}
+	if tags:
+		data['tags'] = ', '.join(tags)
+	if subtitle:
+		data['subtitle'] = subtitle
+	data_lines = '\n'.join('%s: %s' % (tag, value) for tag, value in data.items())
 	with open(path, 'w+') as post_file:
-		post_file.write('# %s\npubdate: %s\n\nPost body here' % (title, pubdate))
+		post_file.write('# %s\n%s\n\nPost body here\n' % (title, data_lines))
 	print('Created new post in', path)
 
 
@@ -85,6 +90,9 @@ def get_parser():
 
 	new_post_parser = new_subparsers.add_parser('post')
 	new_post_parser.add_argument('title')
+	new_post_parser.add_argument('-s', '--subtitle', type=str)
+	new_post_parser.add_argument('-d', '--draft', action='store_true', default=False)
+	new_post_parser.add_argument('-t', '--tags', type=str, nargs='*')
 
 	generate_parser = cmd_subparsers.add_parser('generate')
 
@@ -111,7 +119,12 @@ def main(args=None):
 		if args.new_type == 'page':
 			return new_page(args.title)
 		if args.new_type == 'post':
-			return new_post(args.title)
+			return new_post(
+				args.title,
+				draft=args.draft,
+				tags=args.tags,
+				subtitle=args.subtitle,
+			)
 	if args.command == 'generate':
 		return generate()
 	if args.command == 'serve':
