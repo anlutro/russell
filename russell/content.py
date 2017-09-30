@@ -3,7 +3,6 @@ import logging
 import os.path
 import re
 
-import time
 import dateutil.parser
 import dateutil.tz
 import markdown
@@ -13,7 +12,7 @@ LOG = logging.getLogger(__name__)
 SYSTEM_TZINFO = dateutil.tz.tzlocal()
 
 
-def _schema_url(url, https=False):
+def schema_url(url, https=False):
 	return re.sub(
 		r'^\/\/',
 		('https' if https else 'http') + '://',
@@ -54,7 +53,7 @@ def _str_to_bool(string):
 
 
 class Content:
-	cm = None
+	cm = None #pylint: disable=invalid-name
 
 	@property
 	def root_url(self):
@@ -158,10 +157,10 @@ class Entry(Content):
 
 
 class Page(Entry):
-	def __init__(self, *args, allow_comments=False, dir=None, **kwargs):
+	def __init__(self, *args, allow_comments=False, directory=None, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.allow_comments = allow_comments
-		self.dir = dir
+		self.dir = directory
 
 
 class Post(Entry):
@@ -239,9 +238,11 @@ class CaseInsensitiveDict(dict):
 
 class ContentManager:
 	def __init__(self, root_url):
+		#pylint: disable=invalid-name
 		self.Page = type('CM_Page', (Page,), {'cm': self})
 		self.Post = type('CM_Post', (Post,), {'cm': self})
 		self.Tag = type('CM_Tag', (Tag,), {'cm': self})
+		#pylint: enable=invalid-name
 		self.root_url = root_url
 		self.pages = []
 		self.posts = []

@@ -3,7 +3,6 @@ import hashlib
 import logging
 import os
 import os.path
-import re
 import shutil
 
 import jinja2
@@ -39,7 +38,7 @@ class BlogEngine:
 		self.site_title = site_title
 		self.site_desc = site_desc
 
-		self.cm = russell.content.ContentManager(root_url)
+		self.cm = russell.content.ContentManager(root_url) #pylint: disable=invalid-name
 		self.pages = self.cm.pages
 		self.posts = self.cm.posts
 		self.tags = self.cm.tags
@@ -90,7 +89,7 @@ class BlogEngine:
 			for file in files:
 				fullpath = os.path.join(root, file)
 				relpath = os.path.relpath(fullpath, assets_path)
-				copy_to = os.path.join(self._get_dist_path(relpath, dir='assets'))
+				copy_to = os.path.join(self._get_dist_path(relpath, directory='assets'))
 				LOG.debug('copying %r to %r', fullpath, copy_to)
 				shutil.copyfile(fullpath, copy_to)
 
@@ -111,11 +110,11 @@ class BlogEngine:
 			return posts[:num]
 		return posts
 
-	def _get_dist_path(self, path, dir=None):
+	def _get_dist_path(self, path, directory=None):
 		if isinstance(path, str):
 			path = [path]
-		if dir:
-			path.insert(0, dir)
+		if directory:
+			path.insert(0, directory)
 		return os.path.join(self.root_path, 'dist', *path)
 
 	def _get_template(self, template):
@@ -138,9 +137,9 @@ class BlogEngine:
 			self.generate_page(['tags', tag.slug],
 				template='archive.html.jinja', posts=posts)
 
-	def generate_page(self, path, template, page=None, **kwargs):
-		page_dir = page.dir if page else None
-		path = self._get_dist_path(path, dir=page_dir)
+	def generate_page(self, path: str, template: str, page: russell.content.Page=None, **kwargs):
+		page_dir = page.directory if page else None
+		path = self._get_dist_path(path, directory=page_dir)
 		if not path.endswith('.html'):
 			path = path + '.html'
 		if not os.path.isdir(os.path.dirname(path)):

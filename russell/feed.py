@@ -1,15 +1,15 @@
 from feedgen.feed import FeedGenerator
-from russell.content import _schema_url
+from russell.content import schema_url
 
 
 def get_rss_feed(blog, only_excerpt=True, https=False):
-	fg = FeedGenerator()
+	generator = FeedGenerator()
 
-	root_href = _schema_url(blog.root_url, https)
-	fg.id(root_href)
-	fg.link(href=root_href, rel='alternate')
-	fg.title(blog.site_title)
-	fg.subtitle(blog.site_desc or '')
+	root_href = schema_url(blog.root_url, https)
+	generator.id(root_href)
+	generator.link(href=root_href, rel='alternate')
+	generator.title(blog.site_title)
+	generator.subtitle(blog.site_desc or blog.site_title)
 
 	for post in blog.get_posts():
 		if only_excerpt:
@@ -18,13 +18,13 @@ def get_rss_feed(blog, only_excerpt=True, https=False):
 		else:
 			body = post.body
 
-		post_href = _schema_url(post.url, https=https)
+		post_href = schema_url(post.url, https=https)
 
-		fe = fg.add_entry()
-		fe.id(post_href)
-		fe.link(href=post_href, rel='alternate')
-		fe.title(post.title)
-		fe.description(body)
-		fe.published(post.pubdate)
+		entry = generator.add_entry()
+		entry.id(post_href)
+		entry.link(href=post_href, rel='alternate')
+		entry.title(post.title)
+		entry.description(body)
+		entry.published(post.pubdate)
 
-	return fg
+	return generator
