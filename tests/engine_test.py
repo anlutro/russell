@@ -1,12 +1,4 @@
-import os.path
-import pytest
-from russell.engine import BlogEngine, make_link
-
-
-@pytest.fixture
-def engine():
-	root_path = os.path.dirname(__file__)
-	return BlogEngine(root_path, '//localhost', 'Test Blog')
+from russell.engine import make_link
 
 
 def test_make_link(engine):

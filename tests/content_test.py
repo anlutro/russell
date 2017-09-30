@@ -1,5 +1,5 @@
 from datetime import datetime
-from russell.content import ContentManager, Post, Page, Tag, CaseInsensitiveDict
+from russell.content import ContentManager, Post, Page, Tag, CaseInsensitiveDict, schema_url
 
 
 def test_basic_parsing():
@@ -116,3 +116,12 @@ def test_case_insensitive_dict():
 	assert 'a' in d
 	assert 'A' in d
 	assert 'b' not in d
+
+
+def test_schema_url_changes_schema_agnostic_urls_to_http_or_https():
+	assert 'http://example.com' == schema_url('//example.com', https=False)
+	assert 'https://example.com' == schema_url('//example.com', https=True)
+
+
+def test_schema_url_does_not_change_existing_schema_urls():
+	assert 'http://example.com' == schema_url('http://example.com', https=True)
