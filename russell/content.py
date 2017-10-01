@@ -13,6 +13,9 @@ SYSTEM_TZINFO = dateutil.tz.tzlocal()
 
 
 def schema_url(url, https=False):
+	"""
+	Convert schemaless URLs like //localhost to http:// or https:// URLs.
+	"""
 	return re.sub(
 		r'^\/\/',
 		('https' if https else 'http') + '://',
@@ -22,7 +25,8 @@ def schema_url(url, https=False):
 
 def _get_excerpt(body):
 	excerpt_parts = []
-	# iterate through lines until we find an empty line/two newlines in a row
+	# iterate through lines until we find an empty line, which would indicate
+	# two newlines in a row
 	for line in body.splitlines():
 		if line == '':
 			break
@@ -39,20 +43,21 @@ def _get_description(body, max_chars=100, search='. '):
 	return body[0:stop_idx+1]
 
 
-def _parse_pubdate(pubdate):
-	return dateutil.parser.parse(pubdate)
-
-
 def _str_to_bool(string):
 	norm_string = str(string).strip().lower()
 	if norm_string in ('yes', 'true'):
 		return True
 	elif norm_string in ('no', 'false', ''):
 		return False
-	raise ValueError('Invalid boolean string: {}'.format(repr(string)))
+	raise ValueError('Invalid boolean string: %r' % string)
 
 
 class Content:
+	"""
+	Abstract class to act as a base for all types of content (defined as
+	anything with a URL).
+	"""
+
 	cm = None #pylint: disable=invalid-name
 
 	@property
@@ -63,7 +68,25 @@ class Content:
 
 
 class Entry(Content):
+	"""
+	Abstract class for text content.
+	"""
 	def __init__(self, title, body, slug=None, subtitle=None, description=None, public=True):
+		"""
+		Constructor.
+		Args:
+		  title (str): Title.
+		  body (str): Markdown body of the entry.
+		  slug (str): Optional slug for the entry. If not provided, sulg will be
+		    guessed based on the title.
+		  subtitle (str): Optional subtitle.
+		  description (str): Optional description/excerpt. Mostly used for
+		    <meta> tags.
+		  public (bool): Whether the entry should be public or not. Usually this
+		    defines whether the entry shows up in the front page, archive pages
+		    etc., but even private entries are publicly accessable if you know
+		    the URL.
+		"""
 		self.title = title
 		self.body = body
 		self.slug = slug or slugify.slugify(title)
@@ -76,10 +99,14 @@ class Entry(Content):
 		return self.root_url + '/' + self.slug
 
 	@classmethod
-	def from_string(cls, contents, kwargs=None):
-		if kwargs is None:
-			kwargs = {}
+	def from_string(cls, contents, **kwargs):
+		"""
+		Given a markdown string, create an Entry object.
 
+		Usually subclasses will want to customize the parts of the markdown
+		where you provide values for attributes like public - this can be done
+		by overriding the process_meta method.
+		"""
 		lines = contents.splitlines()
 		title = None
 		description = None
@@ -117,6 +144,14 @@ class Entry(Content):
 
 	@classmethod
 	def process_meta(cls, line, kwargs):
+		"""
+		Process a line of metadata found in the markdown.
+
+		Lines are usually in the format of "key: value".
+
+		Modify the kwargs dict in order to change or add new kwargs that should
+		be passed to the class's constructor.
+		"""
 		if line.startswith('slug:'):
 			kwargs['slug'] = line[5:].strip()
 
@@ -133,31 +168,51 @@ class Entry(Content):
 				LOG.warning('invalid boolean value for private', exc_info=True)
 
 	@classmethod
-	def from_file(cls, path, kwargs=None):
-		if kwargs is None:
-			kwargs = {}
-
+	def from_file(cls, path, **kwargs):
+		"""
+		Given a markdown file, get an Entry object.
+		"""
 		LOG.debug('creating %s from "%s"', cls, path)
 
 		# the filename will be the default slug - can be overridden later
 		kwargs['slug'] = os.path.splitext(os.path.basename(path))[0]
 
-		# if a pubdate wasn't found, use the file's last modified time
+		# TODO: ideally this should be part of the Post class.
+		# if a pubdate isn't explicitly passed, get it from the file metadata
+		# instead. note that it might still be overriden later on while reading
+		# the file contents.
 		if issubclass(cls, Post) and not kwargs.get('pubdate'):
+			# you would think creation always comes before modification, but you
+			# can manually modify a file's modification date to one earlier than
+			# the creation date. this lets you set a post's pubdate by running
+			# the command `touch`. we support this behaviour by simply finding
+			# the chronologically earliest date of creation and modification.
 			timestamp = min(os.path.getctime(path), os.path.getmtime(path))
 			kwargs['pubdate'] = datetime.fromtimestamp(timestamp)
 
 		with open(path, 'r') as file:
-			entry = cls.from_string(file.read(), kwargs)
+			entry = cls.from_string(file.read(), **kwargs)
 
 		return entry
 
 	def __lt__(self, other):
+		"""
+		Implement "less than" comparisons to allow alphabetic sorting.
+		"""
 		return self.title < other.title
 
 
 class Page(Entry):
 	def __init__(self, *args, allow_comments=False, directory=None, **kwargs):
+		"""
+		Constructor. Also see Entry.__init__.
+
+		Args:
+		  allow_comments (bool): Whether to allow comments. Default False.
+		  directory (str): Optional. If the page should live in a subdirectory
+		    instead of at the web root, specify it here instead of making it
+		    part of the slug.
+		"""
 		super().__init__(*args, **kwargs)
 		self.allow_comments = allow_comments
 		self.dir = directory
@@ -165,6 +220,15 @@ class Page(Entry):
 
 class Post(Entry):
 	def __init__(self, *args, pubdate=None, excerpt=None, tags=None, allow_comments=True, **kwargs):
+		"""
+		Constructor. Also see Entry.__init__.
+
+		Args:
+		  pubdate (datetime): When the post was published.
+		  excerpt (str): An excerpt of the post body.
+		  tags (list): A list of Tag objects associated with the post.
+		  allow_comments (bool): Whether to allow comments. Default False.
+		"""
 		super().__init__(*args, **kwargs)
 		self.excerpt = excerpt or _get_excerpt(self.body)
 		self.pubdate = pubdate
@@ -173,6 +237,10 @@ class Post(Entry):
 
 	@classmethod
 	def make_tag(cls, tag_name):
+		"""
+		Make a Tag object from a tag name. Registers it with the content manager
+		if possible.
+		"""
 		if cls.cm:
 			return cls.cm.make_tag(tag_name)
 		return Tag(tag_name.strip())
@@ -184,7 +252,7 @@ class Post(Entry):
 		if line.startswith('pubdate:'):
 			pubdate_str = line[8:].strip()
 			try:
-				kwargs['pubdate'] = _parse_pubdate(pubdate_str)
+				kwargs['pubdate'] = dateutil.parser.parse(pubdate_str)
 			except ValueError:
 				LOG.warning('invalid pubdate given', exc_info=True)
 			if 'pubdate' in kwargs and not kwargs['pubdate'].tzinfo:
@@ -198,15 +266,24 @@ class Post(Entry):
 
 	@property
 	def url(self):
-		return self.root_url + '/posts/' + self.slug
+		return '%s/posts/%s' % (self.root_url, self.slug)
 
 	@property
 	def tag_links(self):
-		return ['<a href="' + tag.url + '">' + tag.title + '</a>' for tag in self.tags]
+		"""
+		Get a list of HTML links for all the tags associated with the post.
+		"""
+		return [
+			'<a href="%s">%s</a>' % (tag.url, tag.title)
+			for tag in self.tags
+		]
 
 	def __lt__(self, other):
+		"""
+		Implement comparison/sorting that takes pubdate into consideration.
+		"""
 		if self.pubdate == other.pubdate:
-			return self.title < other.title
+			return super().__lt__(other)
 		return self.pubdate > other.pubdate
 
 
@@ -226,6 +303,9 @@ class Tag(Content):
 
 
 class CaseInsensitiveDict(dict):
+	"""
+	A dictionary where the keys (assumed to be strings) are not case-sensitive.
+	"""
 	def __setitem__(self, key, value):
 		super().__setitem__(key.lower(), value)
 
@@ -237,6 +317,14 @@ class CaseInsensitiveDict(dict):
 
 
 class ContentManager:
+	"""
+	Class that keeps track of various content.
+
+	Objects of this class have "Page", "Post" and "Tag" attributes, which work
+	as plain class constructors, but will also set the attribute "cm" on these,
+	to make it easy for instances of these to know what their site's root_url
+	is. Also keeps track of tags to avoid duplicate instances of Tag objectss
+	"""
 	def __init__(self, root_url):
 		#pylint: disable=invalid-name
 		self.Page = type('CM_Page', (Page,), {'cm': self})
