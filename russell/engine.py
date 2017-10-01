@@ -101,7 +101,8 @@ class BlogEngine:
 			self.asset_hash[relpath] = md5sum
 
 	def get_posts(self, num=None, tag=None, private=False):
-		posts = self.posts.copy()
+		posts = self.posts
+
 		if not private:
 			posts = [post for post in posts if post.public]
 		if tag:
