@@ -1,5 +1,7 @@
 from datetime import datetime
-from russell.content import ContentManager, Post, Page, Tag, CaseInsensitiveDict, schema_url
+from russell.content import (
+	ContentManager, Post, Page, Tag, CaseInsensitiveDict, schema_url
+)
 
 
 def test_basic_parsing():
@@ -43,7 +45,7 @@ def test_private_parsing():
 	assert post.public == False
 
 
-def test_excerpt():
+def test_excerpt_cuts_off_at_double_newline():
 	md = ('# Hello world!\n\n'
 		'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec\n'
 		'maximus diam ut ligula blandit semper. Proin id nulla libero.\n\n'
@@ -51,9 +53,23 @@ def test_excerpt():
 		'consectetur. In pharetra, justo a ultrices porttitor, quam risus\n'
 		'semper dolor, interdum tempus est libero ac tellus.')
 	post = Post.from_string(md)
-	expected = ('<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
-		'Donec maximus diam ut ligula blandit semper. Proin id nulla libero.</p>')
-	assert post.excerpt == expected
+	expected = ('Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
+		'Donec maximus diam ut ligula blandit semper. Proin id nulla libero.')
+	assert '<p>%s</p>' % expected == post.excerpt
+
+
+def test_description_cuts_off_at_160_characters():
+	md = ('# Hello world!\n\n'
+		'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec\n'
+		'maximus diam ut ligula blandit semper. Proin id nulla libero.\n'
+		'Quisque blandit ut enim in ultricies. Sed sollicitudin aliquam\n'
+		'consectetur. In pharetra, justo a ultrices porttitor, quam risus\n'
+		'semper dolor, interdum tempus est libero ac tellus.')
+	post = Post.from_string(md)
+	expected = ('Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
+		'Donec maximus diam ut ligula blandit semper. Proin id nulla libero.')
+	assert expected == post.description
+	assert len(post.description) < 160
 
 
 def test_content_manager_root_url():

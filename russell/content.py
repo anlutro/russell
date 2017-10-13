@@ -34,9 +34,9 @@ def _get_excerpt(body):
 	return ' '.join(excerpt_parts)
 
 
-def _get_description(body, max_chars=100, search='. '):
+def _get_description(body, max_chars, search='. '):
 	stop_idx = body.rfind(search, 0, max_chars)
-	if stop_idx == -1 or stop_idx < max_chars:
+	if stop_idx == -1 or stop_idx < (max_chars / 2):
 		stop_idx = body.find(search, max_chars)
 	if stop_idx == -1:
 		return body
