@@ -12,6 +12,11 @@ LOG = logging.getLogger(__name__)
 SYSTEM_TZINFO = dateutil.tz.tzlocal()
 
 
+def render_markdown(md):
+	extensions = ['markdown.extensions.fenced_code']
+	return markdown.markdown(md, extensions=extensions)
+
+
 def schema_url(url, https=False):
 	"""
 	Convert schemaless URLs like //localhost to http:// or https:// URLs.
@@ -137,8 +142,8 @@ class Entry(Content):
 		if description is None:
 			description = _get_description(excerpt, 160)
 		if issubclass(cls, Post):
-			kwargs['excerpt'] = markdown.markdown(excerpt)
-		body = markdown.markdown(body)
+			kwargs['excerpt'] = render_markdown(excerpt)
+		body = render_markdown(body)
 
 		return cls(title=title, body=body, description=description, **kwargs)
 

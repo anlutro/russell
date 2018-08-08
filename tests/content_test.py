@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from russell.content import (
 	ContentManager, Post, Page, Tag, CaseInsensitiveDict, schema_url
 )
@@ -9,6 +10,12 @@ def test_basic_parsing():
 	post = Post.from_string(md)
 	assert 'Hello world!' == post.title
 	assert '<p>This is a test post.</p>' == post.body
+
+
+def test_code_block_parsing():
+	md = '# Hello world!\n\n```sh\nfoo\n```'
+	post = Post.from_string(md)
+	assert '<pre><code class="sh">foo\n</code></pre>' in post.body
 
 
 def test_pubdate_parsing():
