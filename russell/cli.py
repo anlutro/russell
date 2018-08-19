@@ -8,6 +8,8 @@ import subprocess
 import dateutil.tz
 import slugify
 
+import russell
+
 
 def setup(dest):
 	module_root = os.path.dirname(os.path.dirname(__file__))
@@ -77,6 +79,9 @@ def serve():
 
 def get_parser():
 	parser = argparse.ArgumentParser('russell')
+	parser.add_argument('-v', '--version', action='version',
+		version='russell version ' + str(russell.__version__))
+
 	cmd_subparsers = parser.add_subparsers(dest='command')
 
 	setup_parser = cmd_subparsers.add_parser('setup')

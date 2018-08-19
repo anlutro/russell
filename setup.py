@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
 from __future__ import print_function
-from setuptools import setup, find_packages
+import ast
 import os.path
+import setuptools
 import sys
 
 if sys.version_info[0] != 3:
@@ -16,10 +17,16 @@ def read_requirements(path='requirements.txt'):
     lines = [l.strip() for l in lines if l]
     return [l for l in lines if l]
 
-setup(
+def get_version(path='russell/__version__.py'):
+    with open(path) as fh:
+        for line in fh:
+            if line.startswith('__version__ ='):
+                return ast.literal_eval(line[14:])
+
+setuptools.setup(
     name='russell',
     packages=['russell'],
-    version='0.5.8',
+    version=get_version(),
     license='MIT',
     description='A static HTML blog generator.',
     author='Andreas Lutro',
