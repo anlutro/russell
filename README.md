@@ -53,13 +53,3 @@ The "index" and "archive" templates have the `posts` variable available. The
 "post" template has the `post` variable and "page" has the `page` variable.
 `posts` is an array of `Post` objects, the others are a single instance of
 either `Post` or `Page`.
-
-## Contact
-
-Open an issue on GitHub if you have any problems or suggestions.
-
-## License
-
-The contents of this repository is released under the [MIT
-license](http://opensource.org/licenses/MIT). See the LICENSE file included for
-details.

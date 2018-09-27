@@ -27,7 +27,7 @@ setuptools.setup(
     name='russell',
     packages=['russell'],
     version=get_version(),
-    license='MIT',
+    license='GPL-3.0',
     description='A static HTML blog generator.',
     author='Andreas Lutro',
     author_email='anlutro@gmail.com',
