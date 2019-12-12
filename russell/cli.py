@@ -61,6 +61,8 @@ def new_post(title, draft=False, tags=None, subtitle=None):
 	if subtitle:
 		data['subtitle'] = subtitle
 	data_lines = '\n'.join('%s: %s' % (tag, value) for tag, value in data.items())
+	if not os.path.exists(os.path.dirname(path)):
+		os.makedirs(os.path.dirname(path))
 	with open(path, 'w+') as post_file:
 		post_file.write('# %s\n%s\n\nPost body here\n' % (title, data_lines))
 	print('Created new post in', path)
