@@ -4,8 +4,6 @@ import re
 import pytest
 import russell.cli
 
-pytestmark = pytest.mark.slow
-
 
 @pytest.fixture(params=(True, False))
 def russell_dir_variation(tmpdir, request):
@@ -21,7 +19,6 @@ def test_setup_new_and_existing(russell_dir_variation):
 	assert d.join('requirements.txt').check()
 	assert d.join('.gitignore').check()
 	assert d.join('style.sass').check()
-	assert d.join('assets').check()
 	assert d.join('pages').check()
 	assert d.join('pages', 'test-page.md').check()
 	assert d.join('posts', 'test-post.md').check()
