@@ -68,6 +68,26 @@ def new_post(title, draft=False, tags=None, subtitle=None):
 	print('Created new post in', path)
 
 
+def publish(draft_file, update_pubdate=True):
+	old_path = os.path.abspath(draft_file)
+	drafts_path = os.path.abspath('drafts')
+	posts_path = os.path.abspath('posts')
+	assert old_path.startswith(drafts_path)
+
+	now = datetime.datetime.now(dateutil.tz.tzlocal())
+	new_pubdate = now.strftime('%Y-%m-%d %H:%M %Z')
+
+	new_path = old_path.replace(drafts_path, posts_path)
+	print('Moving', old_path, 'to', new_path)
+	with open(old_path, 'rt') as old_fh, open(new_path, 'wt') as new_fh:
+		for line in old_fh:
+			if line.startswith('pubdate') and update_pubdate:
+				print('Changing pubdate to', new_pubdate)
+				line = 'pubdate: ' + new_pubdate + '\n'
+			new_fh.write(line)
+	os.remove(old_path)
+
+
 def generate():
 	subprocess.check_call(['python', 'run.py'])
 
@@ -101,6 +121,10 @@ def get_parser():
 	new_post_parser.add_argument('-d', '--draft', action='store_true', default=False)
 	new_post_parser.add_argument('-t', '--tags', type=str, nargs='*')
 
+	publish_parser = cmd_subparsers.add_parser('publish')
+	publish_parser.add_argument('draft_file')
+	publish_parser.add_argument('--no-update-pubdate', action='store_false', dest='update_pubdate', default=True)
+
 	generate_parser = cmd_subparsers.add_parser('generate')
 
 	serve_parser = cmd_subparsers.add_parser('serve')
@@ -132,6 +156,8 @@ def main(args=None):
 				tags=args.tags,
 				subtitle=args.subtitle,
 			)
+	if args.command == 'publish':
+		return publish(args.draft_file, update_pubdate=args.update_pubdate)
 	if args.command == 'generate':
 		return generate()
 	if args.command == 'serve':
