@@ -2,16 +2,17 @@ language: python
 dist: xenial
 
 python:
-  - '3.5'
   - '3.6'
   - '3.7'
+  - '3.8'
 
 install:
   - pip install -e .
   - pip install --upgrade -r requirements-dev.txt
 
 script:
-  - py.test
+  - black --check russel
   - pylint -E russell
+  - pytest
 
 sudo: false
