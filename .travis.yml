@@ -1,18 +1,21 @@
-language: python
 dist: xenial
-
-python:
-  - '3.6'
-  - '3.7'
-  - '3.8'
-
-install:
-  - pip install -e .
-  - pip install --upgrade -r requirements-dev.txt
-
-script:
-  - black --check .
-  - pylint -E russell
-  - pytest
-
 sudo: false
+language: python
+python:
+  - '3.8'
+  - '3.7'
+  - '3.6'
+  - '3.5'
+
+install: pip install -e . --upgrade pytest
+script: pytest
+
+jobs:
+  include:
+    - name: black
+      install: pip install --upgrade black
+      script: black --check .
+
+    - name: pylint
+      install: pip install -e . --upgrade pylint
+      script: pylint -E russell
