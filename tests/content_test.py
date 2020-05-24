@@ -138,9 +138,26 @@ def test_tag_equality():
 	assert Tag('Test Tag') == 'test-tag'
 	assert Tag('Test Tag') == 'Test Tag'
 
-	tags = [Tag('b'), Tag('a')]
-	assert 'a' in tags
-	assert 'c' not in tags
+
+def test_post_has_tag():
+	tag = Tag('Test Tag')
+	post = Post('test', 'test', tags=[tag])
+	assert post.has_tag(tag)
+	assert post.has_tag('test-tag')
+	assert post.has_tag('Test Tag')
+	assert not post.has_tag('foo')
+
+
+def test_post_has_tags():
+	tag1 = Tag('tag 1')
+	tag2 = Tag('tag 2')
+	post = Post('test', 'test', tags=[tag1, tag2])
+	assert post.has_tags(['tag 1'], oper=any)
+	assert post.has_tags(['tag 1'], oper=all)
+	assert post.has_tags(['tag 1', 'tag 2'], oper=any)
+	assert post.has_tags(['tag 1', 'tag 2'], oper=all)
+	assert post.has_tags(['tag 1', 'tag 3'], oper=any)
+	assert not post.has_tags(['tag 1', 'tag 3'], oper=all)
 
 
 def test_case_insensitive_dict():

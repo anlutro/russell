@@ -260,13 +260,10 @@ class Post(Entry):
     def has_tag(self, tag):
         return self.has_tags((tag,))
 
-    def has_tags(self, tags):
+    def has_tags(self, tags, oper=any):
         # inefficient, could be improved by having a custom TagCollection
         # class, but the number of tags is usually very low so it's fine
-        for self_tag in self.tags:
-            for tag in tags:
-                if self_tag == tag:
-                    return True
+        return oper((tag in self.tags) for tag in tags)
 
     @classmethod
     def process_meta(cls, line, kwargs):
