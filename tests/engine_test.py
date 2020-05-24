@@ -1,4 +1,4 @@
-from russell.content import Post
+from russell.content import Post, Tag
 from russell.engine import make_link
 
 
@@ -23,6 +23,20 @@ def test_get_posts_does_not_mutate_posts(engine):
 		Post('test post 2', 'test post 2', public=False),
 	])
 	original_posts = engine.posts.copy()
-	posts = engine.get_posts(private=False)
-	posts = engine.get_posts(private=True)
+	engine.get_posts(private=False)
 	assert original_posts == engine.posts
+	engine.get_posts(private=True)
+	assert original_posts == engine.posts
+
+
+def test_get_posts_exclude_tags(engine):
+	engine.cm.add_posts([
+		Post('test post 1', 'test post 1', tags=[Tag('a')]),
+		Post('test post 2', 'test post 2', tags=[Tag('b')]),
+	])
+	posts = engine.get_posts(exclude_tags=['a'])
+	assert len(posts) == 1
+	assert posts[0].title == 'test post 2'
+	posts = engine.get_posts(exclude_tags=['b'])
+	assert len(posts) == 1
+	assert posts[0].title == 'test post 1'

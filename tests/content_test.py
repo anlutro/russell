@@ -134,6 +134,15 @@ def test_tag_sorting():
 	assert tags[1].title == 'b'
 
 
+def test_tag_equality():
+	assert Tag('Test Tag') == 'test-tag'
+	assert Tag('Test Tag') == 'Test Tag'
+
+	tags = [Tag('b'), Tag('a')]
+	assert 'a' in tags
+	assert 'c' not in tags
+
+
 def test_case_insensitive_dict():
 	d = CaseInsensitiveDict({'a': True})
 	assert 'a' in d

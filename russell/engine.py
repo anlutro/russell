@@ -143,7 +143,7 @@ class BlogEngine:
             LOG.debug("MD5 of %s (%s): %s", fullpath, relpath, md5sum)
             self.asset_hash[relpath] = md5sum
 
-    def get_posts(self, num=None, tag=None, private=False):
+    def get_posts(self, num=None, tag=None, exclude_tags=None, private=False):
         """
 		Get all the posts added to the blog.
 
@@ -152,6 +152,8 @@ class BlogEngine:
 		    most recent first).
 		  tag (Tag): Optional. If provided, only return posts that have a
 		    specific tag.
+          exclude_tags (set): Optional. If provided, don't return posts that
+            have these tags.
 		  private (bool): By default (if False), private posts are not included.
 		    If set to True, private posts will also be included.
 		"""
@@ -162,6 +164,8 @@ class BlogEngine:
 
         if tag:
             posts = [post for post in posts if tag in post.tags]
+        elif exclude_tags:
+            posts = [post for post in posts if not post.has_tags(exclude_tags)]
 
         if num:
             return posts[:num]
@@ -238,11 +242,11 @@ class BlogEngine:
         with open(path, "w+") as file:
             file.write(html)
 
-    def generate_index(self, num_posts=5):
+    def generate_index(self, num_posts=5, exclude_tags=None):
         """
 		Generate the front page, aka index.html.
 		"""
-        posts = self.get_posts(num=num_posts)
+        posts = self.get_posts(num=num_posts, exclude_tags=None)
         self.generate_page("index", template="index.html.jinja", posts=posts)
 
     def generate_archive(self):

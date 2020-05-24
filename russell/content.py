@@ -257,6 +257,17 @@ class Post(Entry):
             return cls.cm.make_tag(tag_name)
         return Tag(tag_name.strip())
 
+    def has_tag(self, tag):
+        return self.has_tags((tag,))
+
+    def has_tags(self, tags):
+        # inefficient, could be improved by having a custom TagCollection
+        # class, but the number of tags is usually very low so it's fine
+        for self_tag in self.tags:
+            for tag in tags:
+                if self_tag == tag:
+                    return True
+
     @classmethod
     def process_meta(cls, line, kwargs):
         super().process_meta(line, kwargs)
@@ -312,6 +323,14 @@ class Tag(Content):
 
     def __lt__(self, other):
         return self.title < other.title
+
+    def __eq__(self, other):
+        if isinstance(other, Tag):
+            return self.slug == other.slug
+        if not isinstance(other, str):
+            raise ValueError('can only compare with Tag or str, %s given' % type(other))
+        other = other.lower()
+        return self.slug == other or self.title.lower() == other
 
 
 class CaseInsensitiveDict(dict):
