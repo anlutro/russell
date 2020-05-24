@@ -325,7 +325,7 @@ class Tag(Content):
         if isinstance(other, Tag):
             return self.slug == other.slug
         if not isinstance(other, str):
-            raise ValueError('can only compare with Tag or str, %s given' % type(other))
+            raise ValueError("can only compare with Tag or str, %s given" % type(other))
         other = other.lower()
         return self.slug == other or self.title.lower() == other
 
