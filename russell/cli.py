@@ -164,7 +164,10 @@ def main(args=None):
             return new_page(args.title)
         if args.new_type == "post":
             return new_post(
-                args.title, draft=args.draft, tags=args.tags, subtitle=args.subtitle,
+                args.title,
+                draft=args.draft,
+                tags=args.tags,
+                subtitle=args.subtitle,
             )
     if args.command == "publish":
         return publish(args.draft_file, update_pubdate=args.update_pubdate)

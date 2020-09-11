@@ -2,9 +2,11 @@
 
 from __future__ import print_function
 import ast
-import os.path
+import os
 import setuptools
 import sys
+
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 if sys.version_info[0] != 3:
     print("Only Python 3 is supported!")
@@ -38,5 +40,7 @@ setuptools.setup(
     keywords=["blog", "static", "html", "generator"],
     classifiers=[],
     install_requires=read_requirements(),
-    entry_points={"console_scripts": ["russell=russell.cli:main"],},
+    entry_points={
+        "console_scripts": ["russell=russell.cli:main"],
+    },
 )

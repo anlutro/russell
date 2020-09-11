@@ -110,14 +110,26 @@ def test_content_manager_tags():
 
 
 def test_page_sort():
-    pages = sorted([Page("b", ""), Page("c", ""), Page("a", ""),])
+    pages = sorted(
+        [
+            Page("b", ""),
+            Page("c", ""),
+            Page("a", ""),
+        ]
+    )
     assert pages[0].title == "a"
     assert pages[1].title == "b"
     assert pages[2].title == "c"
 
 
 def test_post_sort():
-    posts = sorted([Post("b", ""), Post("c", ""), Post("a", ""),])
+    posts = sorted(
+        [
+            Post("b", ""),
+            Post("c", ""),
+            Post("a", ""),
+        ]
+    )
     assert posts[0].title == "a"
     assert posts[1].title == "b"
     assert posts[2].title == "c"

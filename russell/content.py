@@ -19,8 +19,8 @@ def render_markdown(md):
 
 def schema_url(url, https=False):
     """
-	Convert schemaless URLs like //localhost to http:// or https:// URLs.
-	"""
+    Convert schemaless URLs like //localhost to http:// or https:// URLs.
+    """
     return re.sub(r"^\/\/", ("https" if https else "http") + "://", url)
 
 
@@ -55,9 +55,9 @@ def _str_to_bool(string):
 
 class Content:
     """
-	Abstract class to act as a base for all types of content (defined as
-	anything with a URL).
-	"""
+    Abstract class to act as a base for all types of content (defined as
+    anything with a URL).
+    """
 
     cm = None  # pylint: disable=invalid-name
 
@@ -70,27 +70,27 @@ class Content:
 
 class Entry(Content):
     """
-	Abstract class for text content.
-	"""
+    Abstract class for text content.
+    """
 
     def __init__(
         self, title, body, slug=None, subtitle=None, description=None, public=True
     ):
         """
-		Constructor.
-		Args:
-		  title (str): Title.
-		  body (str): Markdown body of the entry.
-		  slug (str): Optional slug for the entry. If not provided, sulg will be
-		    guessed based on the title.
-		  subtitle (str): Optional subtitle.
-		  description (str): Optional description/excerpt. Mostly used for
-		    <meta> tags.
-		  public (bool): Whether the entry should be public or not. Usually this
-		    defines whether the entry shows up in the front page, archive pages
-		    etc., but even private entries are publicly accessable if you know
-		    the URL.
-		"""
+        Constructor.
+        Args:
+          title (str): Title.
+          body (str): Markdown body of the entry.
+          slug (str): Optional slug for the entry. If not provided, sulg will be
+            guessed based on the title.
+          subtitle (str): Optional subtitle.
+          description (str): Optional description/excerpt. Mostly used for
+            <meta> tags.
+          public (bool): Whether the entry should be public or not. Usually this
+            defines whether the entry shows up in the front page, archive pages
+            etc., but even private entries are publicly accessable if you know
+            the URL.
+        """
         self.title = title
         self.body = body
         self.slug = slug or slugify.slugify(title)
@@ -105,12 +105,12 @@ class Entry(Content):
     @classmethod
     def from_string(cls, contents, **kwargs):
         """
-		Given a markdown string, create an Entry object.
+        Given a markdown string, create an Entry object.
 
-		Usually subclasses will want to customize the parts of the markdown
-		where you provide values for attributes like public - this can be done
-		by overriding the process_meta method.
-		"""
+        Usually subclasses will want to customize the parts of the markdown
+        where you provide values for attributes like public - this can be done
+        by overriding the process_meta method.
+        """
         lines = contents.splitlines()
         title = None
         description = None
@@ -149,13 +149,13 @@ class Entry(Content):
     @classmethod
     def process_meta(cls, line, kwargs):
         """
-		Process a line of metadata found in the markdown.
+        Process a line of metadata found in the markdown.
 
-		Lines are usually in the format of "key: value".
+        Lines are usually in the format of "key: value".
 
-		Modify the kwargs dict in order to change or add new kwargs that should
-		be passed to the class's constructor.
-		"""
+        Modify the kwargs dict in order to change or add new kwargs that should
+        be passed to the class's constructor.
+        """
         if line.startswith("slug:"):
             kwargs["slug"] = line[5:].strip()
 
@@ -174,8 +174,8 @@ class Entry(Content):
     @classmethod
     def from_file(cls, path, **kwargs):
         """
-		Given a markdown file, get an Entry object.
-		"""
+        Given a markdown file, get an Entry object.
+        """
         LOG.debug('creating %s from "%s"', cls, path)
 
         # the filename will be the default slug - can be overridden later
@@ -201,22 +201,22 @@ class Entry(Content):
 
     def __lt__(self, other):
         """
-		Implement "less than" comparisons to allow alphabetic sorting.
-		"""
+        Implement "less than" comparisons to allow alphabetic sorting.
+        """
         return self.title < other.title
 
 
 class Page(Entry):
     def __init__(self, *args, allow_comments=False, directory=None, **kwargs):
         """
-		Constructor. Also see Entry.__init__.
+        Constructor. Also see Entry.__init__.
 
-		Args:
-		  allow_comments (bool): Whether to allow comments. Default False.
-		  directory (str): Optional. If the page should live in a subdirectory
-		    instead of at the web root, specify it here instead of making it
-		    part of the slug.
-		"""
+        Args:
+          allow_comments (bool): Whether to allow comments. Default False.
+          directory (str): Optional. If the page should live in a subdirectory
+            instead of at the web root, specify it here instead of making it
+            part of the slug.
+        """
         super().__init__(*args, **kwargs)
         self.allow_comments = allow_comments
         self.dir = directory
@@ -233,14 +233,14 @@ class Post(Entry):
         **kwargs
     ):
         """
-		Constructor. Also see Entry.__init__.
+        Constructor. Also see Entry.__init__.
 
-		Args:
-		  pubdate (datetime): When the post was published.
-		  excerpt (str): An excerpt of the post body.
-		  tags (list): A list of Tag objects associated with the post.
-		  allow_comments (bool): Whether to allow comments. Default False.
-		"""
+        Args:
+          pubdate (datetime): When the post was published.
+          excerpt (str): An excerpt of the post body.
+          tags (list): A list of Tag objects associated with the post.
+          allow_comments (bool): Whether to allow comments. Default False.
+        """
         super().__init__(*args, **kwargs)
         self.excerpt = excerpt or _get_excerpt(self.body)
         self.pubdate = pubdate
@@ -250,9 +250,9 @@ class Post(Entry):
     @classmethod
     def make_tag(cls, tag_name):
         """
-		Make a Tag object from a tag name. Registers it with the content manager
-		if possible.
-		"""
+        Make a Tag object from a tag name. Registers it with the content manager
+        if possible.
+        """
         if cls.cm:
             return cls.cm.make_tag(tag_name)
         return Tag(tag_name.strip())
@@ -294,14 +294,14 @@ class Post(Entry):
     @property
     def tag_links(self):
         """
-		Get a list of HTML links for all the tags associated with the post.
-		"""
+        Get a list of HTML links for all the tags associated with the post.
+        """
         return ['<a href="%s">%s</a>' % (tag.url, tag.title) for tag in self.tags]
 
     def __lt__(self, other):
         """
-		Implement comparison/sorting that takes pubdate into consideration.
-		"""
+        Implement comparison/sorting that takes pubdate into consideration.
+        """
         if self.pubdate == other.pubdate:
             return super().__lt__(other)
         return self.pubdate > other.pubdate
@@ -332,8 +332,8 @@ class Tag(Content):
 
 class CaseInsensitiveDict(dict):
     """
-	A dictionary where the keys (assumed to be strings) are not case-sensitive.
-	"""
+    A dictionary where the keys (assumed to be strings) are not case-sensitive.
+    """
 
     def __setitem__(self, key, value):
         super().__setitem__(key.lower(), value)
@@ -347,13 +347,13 @@ class CaseInsensitiveDict(dict):
 
 class ContentManager:
     """
-	Class that keeps track of various content.
+    Class that keeps track of various content.
 
-	Objects of this class have "Page", "Post" and "Tag" attributes, which work
-	as plain class constructors, but will also set the attribute "cm" on these,
-	to make it easy for instances of these to know what their site's root_url
-	is. Also keeps track of tags to avoid duplicate instances of Tag objectss
-	"""
+    Objects of this class have "Page", "Post" and "Tag" attributes, which work
+    as plain class constructors, but will also set the attribute "cm" on these,
+    to make it easy for instances of these to know what their site's root_url
+    is. Also keeps track of tags to avoid duplicate instances of Tag objectss
+    """
 
     def __init__(self, root_url):
         # pylint: disable=invalid-name
