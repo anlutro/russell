@@ -13,6 +13,7 @@ __pycache__
 /.venv
 /.virtualenv
 /bin
+/build
 /dist
 /include
 /lib
