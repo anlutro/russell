@@ -81,12 +81,12 @@ class BlogEngine:
 
         self.asset_hash = {}
         if cache_busting_strategy == "qs":
-            asset_url_func = self.get_asset_url_qs
+            self.get_asset_url = self.get_asset_url_qs
         elif cache_busting_strategy == "part":
-            asset_url_func = self.get_asset_url_part
+            self.get_asset_url = self.get_asset_url_part
         else:
             LOG.warning("no cache busting will be used!")
-            asset_url_func = str
+            self.get_asset_url = str
 
         self.jinja = jinja2.Environment(
             loader=jinja2.FileSystemLoader(os.path.join(root_path, "templates")),
@@ -95,7 +95,7 @@ class BlogEngine:
             {
                 "a": make_link,
                 "asset_hash": self.asset_hash,
-                "asset_url": asset_url_func,
+                "asset_url": self.get_asset_url,
                 "now": datetime.now(),
                 "root_url": self.root_url,
                 "site_description": self.site_desc,
