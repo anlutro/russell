@@ -3,15 +3,17 @@
 import os.path
 import logging
 import sass
-from russell import BlogEngine
+import russell
 
-ROOT_DIR = os.path.dirname(__file__)
-
-logging.basicConfig(format="%(asctime)s %(levelname)8s [%(name)s] %(message)s")
-
-blog = BlogEngine(
-    root_path=ROOT_DIR,
-    root_url="//localhost",
+root_path = os.path.dirname(__file__)
+args = russell.get_cli_args()
+logging.basicConfig(
+    level=logging.DEBUG if args.verbose else logging.INFO,
+    format="%(asctime)s %(levelname)8s [%(name)s] %(message)s",
+)
+blog = russell.BlogEngine(
+    root_path=root_path,
+    root_url=args.root_url or "//localhost",
     site_title="Russell example",
     site_desc=("An example Russell site."),
 )
@@ -20,11 +22,13 @@ blog = BlogEngine(
 blog.add_pages()
 blog.add_posts()
 
+
 def generate():
     # copy and generate assets
     blog.copy_assets()
     blog.write_file(
-        "assets/style.css", sass.compile(filename=os.path.join(ROOT_DIR, "style.sass"))
+        "assets/style.css",
+        sass.compile(filename=os.path.join(blog.root_path, "style.sass")),
     )
     blog.add_asset_hashes()
 

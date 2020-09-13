@@ -65,6 +65,8 @@ class BlogEngine:
           site_desc (str): A subtitle or description of your website.
           cache_busting_strategy (str): None, "qs" or "part"
         """
+        assert os.path.exists(root_path), "root_path must be an existing directory"
+        assert root_url, "root_url must be set"
         self.root_path = root_path
         self.root_url = root_url
         self.site_title = site_title

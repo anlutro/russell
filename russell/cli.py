@@ -13,13 +13,13 @@ import subprocess
 import dateutil.tz
 import slugify
 
-import russell
+from russell.__version__ import __version__
 
 
 def load_config_py(path=None):
     if path is None:
         path = os.getcwd() + "/config.py"
-    loader = importlib.machinery.SourceFileLoader('russell_config', path)
+    loader = importlib.machinery.SourceFileLoader("russell_config", path)
     spec = importlib.util.spec_from_loader(loader.name, loader)
     mod = importlib.util.module_from_spec(spec)
     loader.exec_module(mod)
@@ -159,11 +159,13 @@ def serve(dist_dir):
 
 def get_parser():
     parser = argparse.ArgumentParser("russell")
+    parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument("-r", "--root-path", default=os.getcwd())
     parser.add_argument(
-        "-v",
+        "-V",
         "--version",
         action="version",
-        version="russell version " + str(russell.__version__),
+        version="russell version " + str(__version__),
     )
 
     cmd_subparsers = parser.add_subparsers(dest="command")
@@ -190,20 +192,29 @@ def get_parser():
     )
 
     generate_parser = cmd_subparsers.add_parser("generate")
+    generate_parser.add_argument("--root-url")
 
     serve_parser = cmd_subparsers.add_parser("serve")
+    serve_parser.add_argument(
+        "-d", "--dist-dir", default=os.path.join(os.getcwd(), "dist")
+    )
 
     return parser
 
 
-def parse_args(parser=None, args=None):
-    parser = parser or get_parser()
-    return parser.parse_args(args)
+_args = None
+
+
+def get_args():
+    global _args
+    return _args
 
 
 def main(args=None):
     parser = get_parser()
-    args = parse_args(parser)
+    args = parser.parse_args()
+    global _args
+    _args = args
 
     if not args.command:
         return parser.print_help()
