@@ -112,9 +112,11 @@ class BlogEngine:
         Args:
           path (str): Path to the file, relative to your "assets" directory.
         """
-        if path in self.asset_hash:
+        if path.endswith(self.bust_extensions) and path in self.asset_hash:
             path += "?" + self.asset_hash[path]
         return self.root_url + "/assets/" + path
+
+    bust_extensions = (".js", ".min.js", ".js.map", ".css", ".min.css", ".css.map")
 
     def get_asset_url_part(self, path):
         """
@@ -124,7 +126,7 @@ class BlogEngine:
         Args:
           path (str): Path to the file, relative to your "assets" directory.
         """
-        if path in self.asset_hash:
+        if path.endswith(self.bust_extensions) and path in self.asset_hash:
             *dirs, filename = path.split("/")
             file_parts = filename.split(".", maxsplit=1)
             file_parts.insert(1, self.asset_hash[path])
