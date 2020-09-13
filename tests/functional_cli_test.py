@@ -15,7 +15,7 @@ def russell_dir_variation(tmpdir, request):
 def test_setup_new_and_existing(russell_dir_variation):
     d = russell_dir_variation
     russell.cli.setup(str(d))
-    assert d.join("run.py").check()
+    assert d.join("config.py").check()
     assert d.join("requirements.txt").check()
     assert d.join(".gitignore").check()
     assert d.join("style.sass").check()

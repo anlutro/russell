@@ -2,6 +2,8 @@ import argparse
 import datetime
 import functools
 import http.server
+import importlib.machinery
+import importlib.util
 import os
 import os.path
 import re
@@ -12,6 +14,16 @@ import dateutil.tz
 import slugify
 
 import russell
+
+
+def load_config_py(path=None):
+    if path is None:
+        path = os.getcwd() + "/config.py"
+    loader = importlib.machinery.SourceFileLoader('russell_config', path)
+    spec = importlib.util.spec_from_loader(loader.name, loader)
+    mod = importlib.util.module_from_spec(spec)
+    loader.exec_module(mod)
+    return mod
 
 
 def setup(dest):
@@ -99,7 +111,8 @@ def publish(draft_file, update_pubdate=True):
 
 
 def generate():
-    subprocess.check_call(["python", "run.py"])
+    russell_config = load_config_py()
+    russell_config.generate()
 
 
 class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
