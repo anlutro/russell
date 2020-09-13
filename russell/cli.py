@@ -1,7 +1,10 @@
 import argparse
 import datetime
+import functools
+import http.server
 import os
 import os.path
+import re
 import shutil
 import subprocess
 
@@ -99,11 +102,46 @@ def generate():
     subprocess.check_call(["python", "run.py"])
 
 
-def serve():
+class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
+    hash_pattern = re.compile(r"[0-9a-f]{8,12,16,24,32,48,64}")
+
+    def translate_path(self, path):
+        path = super().translate_path(path)
+        try_paths = []
+
+        directory, filename = path.rsplit("/", maxsplit=1)
+        if "." in filename:
+            file_parts = filename.split(".")
+            if (
+                len(file_parts) > 2
+                and len(file_parts[1]) % 8 == 0
+                and re.match(r"[0-9a-f]", file_parts[1])
+            ):
+                del file_parts[1]
+                unbusted_path = "/".join([directory, ".".join(file_parts)])
+                try_paths.append(unbusted_path)
+        else:
+            try_paths.extend([path + ".html", path + "/index.html"])
+
+        for try_path in try_paths:
+            if os.path.exists(try_path):
+                return try_path
+        return path
+
+
+def serve(dist_dir):
     try:
-        subprocess.check_call(["sh", "-c", "cd dist && python -m http.server"])
+        httpd = http.server.HTTPServer(
+            ("127.0.0.1", 8000),
+            functools.partial(CustomHTTPRequestHandler, directory=dist_dir),
+        )
+        sa = httpd.socket.getsockname()
+        print("Serving HTTP on http://%s:%s/ ..." % sa)
+        httpd.serve_forever()
     except KeyboardInterrupt:
         pass
+    finally:
+        httpd.server_close()
 
 
 def get_parser():
@@ -174,7 +212,7 @@ def main(args=None):
     if args.command == "generate":
         return generate()
     if args.command == "serve":
-        return serve()
+        return serve(os.path.join(os.getcwd(), "dist"))
 
 
 if __name__ == "__main__":
