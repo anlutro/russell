@@ -16,8 +16,9 @@ def test_get_asset_link(engine):
 
 
 def test_get_asset_link_with_hash(engine):
-    engine.asset_hash["test.css"] = "asdf"
-    assert "//localhost/assets/test.css?asdf" == engine.get_asset_url("test.css")
+    engine.asset_hash["test.css"] = "0f4c"
+    assert "//localhost/assets/test.css?0f4c" == engine.get_asset_url_qs("test.css")
+    assert "//localhost/assets/test.0f4c.css" == engine.get_asset_url_part("test.css")
 
 
 def test_get_posts_does_not_mutate_posts(engine):

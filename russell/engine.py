@@ -46,7 +46,14 @@ class BlogEngine:
     generating end results.
     """
 
-    def __init__(self, root_path, root_url, site_title, site_desc=None):
+    def __init__(
+        self,
+        root_path,
+        root_url,
+        site_title,
+        site_desc=None,
+        cache_busting_strategy="qs",
+    ):
         """
         Constructor.
 
@@ -56,7 +63,10 @@ class BlogEngine:
           root_url (str): The root URL of your website.
           site_title (str): The title of your website.
           site_desc (str): A subtitle or description of your website.
+          cache_busting_strategy (str): None, "qs" or "part"
         """
+        assert os.path.exists(root_path), "root_path must be an existing directory"
+        assert root_url, "root_url must be set"
         self.root_path = root_path
         self.root_url = root_url
         self.site_title = site_title
@@ -70,6 +80,13 @@ class BlogEngine:
         self.tags = self.cm.tags
 
         self.asset_hash = {}
+        if cache_busting_strategy == "qs":
+            self.get_asset_url = self.get_asset_url_qs
+        elif cache_busting_strategy == "part":
+            self.get_asset_url = self.get_asset_url_part
+        else:
+            LOG.warning("no cache busting will be used!")
+            self.get_asset_url = str
 
         self.jinja = jinja2.Environment(
             loader=jinja2.FileSystemLoader(os.path.join(root_path, "templates")),
@@ -87,7 +104,7 @@ class BlogEngine:
             }
         )
 
-    def get_asset_url(self, path):
+    def get_asset_url_qs(self, path):
         """
         Get the URL of an asset. If asset hashes are added and one exists for
         the path, it will be appended as a query string.
@@ -95,10 +112,26 @@ class BlogEngine:
         Args:
           path (str): Path to the file, relative to your "assets" directory.
         """
-        url = self.root_url + "/assets/" + path
-        if path in self.asset_hash:
-            url += "?" + self.asset_hash[path]
-        return url
+        if path.endswith(self.bust_extensions) and path in self.asset_hash:
+            path += "?" + self.asset_hash[path]
+        return self.root_url + "/assets/" + path
+
+    bust_extensions = (".js", ".min.js", ".js.map", ".css", ".min.css", ".css.map")
+
+    def get_asset_url_part(self, path):
+        """
+        Get the URL of an asset. If asset hashes are added and one exists for
+        the path, it will be appended as a query string.
+
+        Args:
+          path (str): Path to the file, relative to your "assets" directory.
+        """
+        if path.endswith(self.bust_extensions) and path in self.asset_hash:
+            *dirs, filename = path.split("/")
+            file_parts = filename.split(".", maxsplit=1)
+            file_parts.insert(1, self.asset_hash[path])
+            path = "/".join(dirs + [".".join(file_parts)])
+        return self.root_url + "/assets/" + path
 
     def add_pages(self, path="pages"):
         """

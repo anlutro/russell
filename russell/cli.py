@@ -1,14 +1,29 @@
 import argparse
 import datetime
+import functools
+import http.server
+import importlib.machinery
+import importlib.util
 import os
 import os.path
+import re
 import shutil
 import subprocess
 
 import dateutil.tz
 import slugify
 
-import russell
+from russell.__version__ import __version__
+
+
+def load_config_py(path=None):
+    if path is None:
+        path = os.getcwd() + "/config.py"
+    loader = importlib.machinery.SourceFileLoader("russell_config", path)
+    spec = importlib.util.spec_from_loader(loader.name, loader)
+    mod = importlib.util.module_from_spec(spec)
+    loader.exec_module(mod)
+    return mod
 
 
 def setup(dest):
@@ -96,23 +111,61 @@ def publish(draft_file, update_pubdate=True):
 
 
 def generate():
-    subprocess.check_call(["python", "run.py"])
+    russell_config = load_config_py()
+    russell_config.generate()
 
 
-def serve():
+class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
+    hash_pattern = re.compile(r"[0-9a-f]{8,12,16,24,32,48,64}")
+
+    def translate_path(self, path):
+        path = super().translate_path(path)
+        try_paths = []
+
+        directory, filename = path.rsplit("/", maxsplit=1)
+        if "." in filename:
+            file_parts = filename.split(".")
+            if (
+                len(file_parts) > 2
+                and len(file_parts[1]) % 8 == 0
+                and re.match(r"[0-9a-f]", file_parts[1])
+            ):
+                del file_parts[1]
+                unbusted_path = "/".join([directory, ".".join(file_parts)])
+                try_paths.append(unbusted_path)
+        else:
+            try_paths.extend([path + ".html", path + "/index.html"])
+
+        for try_path in try_paths:
+            if os.path.exists(try_path):
+                return try_path
+        return path
+
+
+def serve(dist_dir):
     try:
-        subprocess.check_call(["sh", "-c", "cd dist && python -m http.server"])
+        httpd = http.server.HTTPServer(
+            ("127.0.0.1", 8000),
+            functools.partial(CustomHTTPRequestHandler, directory=dist_dir),
+        )
+        sa = httpd.socket.getsockname()
+        print("Serving HTTP on http://%s:%s/ ..." % sa)
+        httpd.serve_forever()
     except KeyboardInterrupt:
         pass
+    finally:
+        httpd.server_close()
 
 
 def get_parser():
     parser = argparse.ArgumentParser("russell")
+    parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument("-r", "--root-path", default=os.getcwd())
     parser.add_argument(
-        "-v",
+        "-V",
         "--version",
         action="version",
-        version="russell version " + str(russell.__version__),
+        version="russell version " + str(__version__),
     )
 
     cmd_subparsers = parser.add_subparsers(dest="command")
@@ -139,20 +192,29 @@ def get_parser():
     )
 
     generate_parser = cmd_subparsers.add_parser("generate")
+    generate_parser.add_argument("--root-url")
 
     serve_parser = cmd_subparsers.add_parser("serve")
+    serve_parser.add_argument(
+        "-d", "--dist-dir", default=os.path.join(os.getcwd(), "dist")
+    )
 
     return parser
 
 
-def parse_args(parser=None, args=None):
-    parser = parser or get_parser()
-    return parser.parse_args(args)
+_args = None
+
+
+def get_args():
+    global _args
+    return _args
 
 
 def main(args=None):
     parser = get_parser()
-    args = parse_args(parser)
+    args = parser.parse_args()
+    global _args
+    _args = args
 
     if not args.command:
         return parser.print_help()
@@ -174,7 +236,7 @@ def main(args=None):
     if args.command == "generate":
         return generate()
     if args.command == "serve":
-        return serve()
+        return serve(os.path.join(os.getcwd(), "dist"))
 
 
 if __name__ == "__main__":

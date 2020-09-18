@@ -12,9 +12,11 @@ LOG = logging.getLogger(__name__)
 SYSTEM_TZINFO = dateutil.tz.tzlocal()
 
 
-def render_markdown(md):
-    extensions = ["markdown.extensions.fenced_code"]
-    return markdown.markdown(md, extensions=extensions)
+md = markdown.Markdown(extensions=["markdown.extensions.fenced_code"])
+
+
+def render_markdown(text):
+    return md.convert(text)
 
 
 def schema_url(url, https=False):

@@ -35,8 +35,8 @@ resulting .html file will be named.
 
 ### Generating the blog
 
-`russell generate` will create a file `run.py` which you can invoke to generate
-your static site.
+`russell generate` will run the `generate` function in your `config.py`, which
+should contain all the instructions for generating HTML and other assets.
 
 To test your newly generated site, run `russell serve`.
 
