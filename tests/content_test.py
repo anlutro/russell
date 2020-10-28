@@ -20,7 +20,7 @@ def test_basic_parsing():
 def test_code_block_parsing():
     md = "# Hello world!\n\n```sh\nfoo\n```"
     post = Post.from_string(md)
-    assert '<pre><code class="sh">foo\n</code></pre>' in post.body
+    assert '<pre><code class="language-sh">foo\n</code></pre>' in post.body
 
 
 def test_pubdate_parsing():
