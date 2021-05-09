@@ -9,6 +9,8 @@ name: run-tests
   pull_request:
     branches:
       - '**'
+  schedule:
+    - cron: '0 8 1 * *'
 
 jobs:
   pytest:
