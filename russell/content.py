@@ -38,6 +38,8 @@ def _get_excerpt(body):
 
 
 def _get_description(body, max_chars, search=". "):
+    # the idea here is to grab the first few sentences of a body and use that
+    # as the description.
     stop_idx = body.rfind(search, 0, max_chars)
     if stop_idx == -1 or stop_idx < (max_chars / 2):
         stop_idx = body.find(search, max_chars)
@@ -46,6 +48,7 @@ def _get_description(body, max_chars, search=". "):
     return body[0 : stop_idx + 1]
 
 
+# TODO: surely there's something in stdlib for this
 def _str_to_bool(string):
     norm_string = str(string).strip().lower()
     if norm_string in ("yes", "true"):
@@ -61,6 +64,10 @@ class Content:
     anything with a URL).
     """
 
+    # this property allows us to use the root url as well as other nice
+    # things. it's not clean design, it's a circular dependency type of
+    # situation, but it makes things very convenient. the property is set
+    # with metaprogramming magic which is also scary.
     cm = None  # pylint: disable=invalid-name
 
     @property

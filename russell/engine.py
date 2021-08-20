@@ -207,6 +207,8 @@ class BlogEngine:
     def _get_dist_path(self, path, directory=None):
         if isinstance(path, str):
             path = [path]
+        # TODO: the assumption that there will only ever be one directory
+        # works for now, but probably won't hold up
         if directory:
             path.insert(0, directory)
         return os.path.join(self.root_path, "dist", *path)
