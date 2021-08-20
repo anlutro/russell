@@ -202,6 +202,10 @@ def get_parser():
     return parser
 
 
+# this global variable is ugly, but with the way we're loading config.py we
+# need it. we could invert the dependency so that we import and call a
+# specific function in config.py instead of just executing the module, but
+# that would be a full redesign
 _args = None
 
 
