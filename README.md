@@ -1,4 +1,4 @@
-# Russell [![Build Status](https://travis-ci.org/anlutro/russell.png?branch=master)](https://travis-ci.org/anlutro/russell)
+# Russell
 
 A static HTML site generator written in Python 3.
 
