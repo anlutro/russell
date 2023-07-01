@@ -16,9 +16,8 @@ if sys.version_info[0] != 3:
 def read_requirements(path="requirements.txt"):
     fullpath = os.path.join(os.path.dirname(__file__), path)
     with open(fullpath, "r") as f:
-        lines = f.readlines()
-    lines = [l.strip() for l in lines if l]
-    return [l for l in lines if l]
+        lines = [line.strip() for line in f.readlines() if line]
+    return [line for line in lines if line]
 
 
 def get_version(path="russell/__version__.py"):

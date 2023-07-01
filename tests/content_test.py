@@ -53,13 +53,13 @@ def test_empty_tags_parsing():
 def test_public_parsing():
     md = "# Hello world!\npublic: false\n\nThis is a test post."
     post = Post.from_string(md)
-    assert post.public == False
+    assert post.public is False
 
 
 def test_private_parsing():
     md = "# Hello world!\nprivate: true\n\nThis is a test post."
     post = Post.from_string(md)
-    assert post.public == False
+    assert post.public is False
 
 
 def test_excerpt_cuts_off_at_double_newline():

@@ -1,4 +1,3 @@
-import pytest
 from russell.feed import get_rss_feed
 from russell.content import Post
 
