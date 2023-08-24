@@ -77,7 +77,10 @@ def new_post(title, draft=False, tags=None, subtitle=None):
         print(path, "already exists!")
         return
     now = datetime.datetime.now(dateutil.tz.tzlocal())
-    data = {"pubdate": now.strftime("%Y-%m-%d %H:%M %Z")}
+    data = {
+        "pubdate": now.strftime("%Y-%m-%d %H:%M %Z"),
+        "private": True,  # will be stripped by `russell publish`
+    }
     if tags:
         data["tags"] = ", ".join(tags)
     if subtitle:
@@ -106,13 +109,17 @@ def publish(draft_file, update_pubdate=True):
             if line.startswith("pubdate") and update_pubdate:
                 print("Changing pubdate to", new_pubdate)
                 line = "pubdate: " + new_pubdate + "\n"
+            if line.startswith("private"):
+                print("!! When publishing, draft was changed from private to public !!")
+                print("Re-add private:true to the post if you want to keep it private!")
+                continue
             new_fh.write(line)
     os.remove(old_path)
 
 
-def generate():
+def generate(include_drafts=False):
     russell_config = load_config_py()
-    russell_config.generate()
+    russell_config.generate(include_drafts=include_drafts)
 
 
 class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
@@ -193,6 +200,7 @@ def get_parser():
 
     generate_parser = cmd_subparsers.add_parser("generate")
     generate_parser.add_argument("--root-url")
+    generate_parser.add_argument("--drafts", action="store_true")
 
     serve_parser = cmd_subparsers.add_parser("serve")
     serve_parser.add_argument(
@@ -238,7 +246,7 @@ def main(args=None):
     if args.command == "publish":
         return publish(args.draft_file, update_pubdate=args.update_pubdate)
     if args.command == "generate":
-        return generate()
+        return generate(include_drafts=args.drafts)
     if args.command == "serve":
         return serve(os.path.join(os.getcwd(), "dist"))
 

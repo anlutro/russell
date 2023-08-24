@@ -23,7 +23,10 @@ blog.add_pages()
 blog.add_posts()
 
 
-def generate():
+def generate(include_drafts=False):
+    if include_drafts:
+        blog.add_posts("drafts")
+
     # copy and generate assets
     blog.copy_assets()
     blog.write_file(
