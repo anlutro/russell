@@ -19,3 +19,7 @@ __pycache__
 /lib
 /lib64
 /share
+
+# uv
+/.python-version
+/uv.lock

@@ -4,22 +4,16 @@ A static HTML site generator written in Python 3.
 
 ## Installation
 
-The recommended way to install Russell is to first create a virtualenv and install russell:
+The recommended way to install Russell is to use [`uv`](https://docs.astral.sh/uv/):
 
 	$ mkdir /home/myuser/blog
 	$ cd /home/myuser/blog
-	$ python3 -m venv .venv
-	$ source ./.venv/bin/activate
-	$ pip install russell
+	$ uv init
+	$ uv add russell
 
 Once that's done, you can either manually create the required files, or let Russell set up an example project for you:
 
-	$ russell setup .
-
-Alternatively, you can install russell globally and let it create the virtualenv for you. Outside of any virtualenv:
-
-	$ pip install --user russell
-	$ ~/.local/bin/russell setup /home/myuser/blog
+	$ uv run russell setup .
 
 ## Usage
 

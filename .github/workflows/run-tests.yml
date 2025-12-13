@@ -1,6 +1,6 @@
 name: run-tests
 
-'on':
+on:
   push:
     branches:
       - master
@@ -19,30 +19,30 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - '3.8'
-          - '3.9'
           - '3.10'
           - '3.11'
+          - '3.12'
+          - '3.13'
+          - '3.14'
+          - '3.15'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      - run: pip install --upgrade -e . pytest
-      - run: pytest
+      - uses: astral-sh/setup-uv@v7
+      - run: uv run -m pytest
 
   black:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-      - run: pip install --upgrade black
-      - run: black --check .
+      - run: uv run black --check .
 
-  pylint:
+  ruff:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-      - run: pip install --upgrade -e . pylint
-      - run: pylint -E russell
+      - run: uv run ruff check .

@@ -1,6 +1,0 @@
--e .
--r requirements.txt
-black
-pytest
-pytest-cov
-pylint

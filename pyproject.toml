@@ -1,0 +1,60 @@
+# build system configuration
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "russell/__version__.py"
+
+
+
+# project configuration
+
+[project]
+name = "russell"
+requires-python = ">=3.10"
+dynamic = ["version"]
+
+description = "A static HTML blog generator."
+readme = "README.md"
+license = "GPL-3.0-or-later"
+keywords = ["blog", "static", "html", "generator"]
+authors = [
+  { name = "Andreas Lutro", email = "anlutro@gmail.com" }
+]
+
+dependencies = [
+    "feedgen>=0.9,<1",
+    "jinja2>=2.8,<4",
+    "markdown>=2.6,<4",
+    "python-dateutil>=2.6,<3",
+    "python-slugify>=1.2,<5",
+]
+
+[project.urls]
+Homepage = "https://github.com/anlutro/russell"
+Repository = "https://github.com/anlutro/russell.git"
+Issues = "https://github.com/anlutro/russell/issues"
+
+[project.scripts]
+russell = "russell.cli:main"
+
+
+
+# dev and test dependencies + config
+
+[dependency-groups]
+dev = [
+    "black>=25.12.0",
+    "pylint>=4.0.4",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "ruff>=0.14.9",
+    "build>=1.0",
+    "twine>=6.0",
+]
+
+[tool.pytest]
+minversion = "9.0"
+testpaths = ["tests"]
