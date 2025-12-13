@@ -239,7 +239,7 @@ class Post(Entry):
         excerpt=None,
         tags=None,
         allow_comments=True,
-        **kwargs
+        **kwargs,
     ):
         """
         Constructor. Also see Entry.__init__.
