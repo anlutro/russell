@@ -4,17 +4,13 @@
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.hatch.version]
-path = "russell/__version__.py"
-
-
 
 # project configuration
 
 [project]
 name = "russell"
 requires-python = ">=3.10"
-dynamic = ["version"]
+version = "0.6.1"
 
 description = "A static HTML blog generator."
 readme = "README.md"
