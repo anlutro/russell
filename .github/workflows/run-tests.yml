@@ -30,6 +30,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
       - run: uv run -m pytest
 
   black:
@@ -38,7 +40,9 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - uses: astral-sh/setup-uv@v7
-      - run: uv run black --check .
+        with:
+          enable-cache: true
+      - run: uv tool run black --check .
 
   ruff:
     runs-on: ubuntu-latest
@@ -46,4 +50,6 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - uses: astral-sh/setup-uv@v7
-      - run: uv run ruff check .
+        with:
+          enable-cache: true
+      - run: uv tool run ruff check .
