@@ -13,8 +13,6 @@ import subprocess
 import dateutil.tz
 import slugify
 
-from russell.__version__ import __version__
-
 
 def load_config_py(path=None):
     if path is None:
@@ -161,12 +159,6 @@ def get_parser():
     parser = argparse.ArgumentParser("russell")
     parser.add_argument("-v", "--verbose", action="store_true")
     parser.add_argument("-r", "--root-path", default=os.getcwd())
-    parser.add_argument(
-        "-V",
-        "--version",
-        action="version",
-        version="russell version " + str(__version__),
-    )
 
     cmd_subparsers = parser.add_subparsers(dest="command")
 
