@@ -1,7 +1,5 @@
 from datetime import datetime
 
-import markdown
-
 from russell.content import (
     ContentManager,
     Post,
@@ -22,7 +20,7 @@ def test_basic_parsing():
 def test_code_block_parsing():
     md = "# Hello world!\n\n```sh\nfoo\n```"
     post = Post.from_string(md)
-    html_class = "language-sh" if markdown.__version_info__ >= (3, 3) else "sh"
+    html_class = "language-sh"
     expected = '<pre><code class="%s">foo\n</code></pre>' % html_class
     assert expected in post.body
 
