@@ -24,6 +24,7 @@ jobs:
     - uses: astral-sh/setup-uv@v7
       with:
         enable-cache: true
+    - run: uv version --bump patch --bump dev=$GITHUB_RUN_NUMBER --dry-run
     - run: uv build
     - name: Publish package distributions to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
