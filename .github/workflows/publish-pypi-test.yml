@@ -1,13 +1,9 @@
 name: publish-pypi
 
 on:
-  # TODO: remove
   push:
     branches:
       - develop
-  # TODO: uncomment
-  # release:
-  #   types: [published]
 
 permissions:
   contents: read
@@ -30,6 +26,5 @@ jobs:
     - run: uv build
     - name: Publish package distributions to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
-      # TODO: remove
       with:
         repository-url: https://test.pypi.org/legacy/
