@@ -144,6 +144,9 @@ class Entry(Content):
 
             line = lines.pop(0)
 
+        if not title:
+            raise ValueError("first line of post must be its title")
+
         # the only lines left should be the actual contents
         body = "\n".join(lines).strip()
         excerpt = _get_excerpt(body)
