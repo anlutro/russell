@@ -145,12 +145,16 @@ class BlogEngine:
             pages.append(self.cm.Page.from_file(file, directory=page_dir))
         self.cm.add_pages(pages)
 
-    def add_posts(self, path="posts"):
+    def add_posts(self, path="posts", make_global=False):
         """
         Look through a directory for markdown files and add them as posts.
         """
         path = os.path.join(self.root_path, path)
         self.cm.add_posts([self.cm.Post.from_file(file) for file in _listfiles(path)])
+        if make_global:
+            num_posts = make_global if isinstance(make_global, int) else 5
+            posts = self.get_posts(num=num_posts, exclude_tags=None)
+            self.jinja.globals["latest_posts"] = posts
 
     def copy_assets(self, path="assets"):
         """
