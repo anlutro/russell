@@ -181,17 +181,17 @@ class BlogEngine:
 
     def get_posts(self, num=None, tag=None, exclude_tags=None, private=False):
         """
-              Get all the posts added to the blog.
+        Get all the posts added to the blog.
 
-              Args:
-                num (int): Optional. If provided, only return N posts (sorted by date,
-                  most recent first).
-                tag (Tag): Optional. If provided, only return posts that have a
-                  specific tag.
-        exclude_tags (set): Optional. If provided, don't return posts that
-          have these tags.
-                private (bool): By default (if False), private posts are not included.
-                  If set to True, private posts will also be included.
+        Args:
+          num (int): Optional. If provided, only return N posts (sorted by date,
+              most recent first).
+          tag (Tag): Optional. If provided, only return posts that have a
+              specific tag.
+          exclude_tags (set): Optional. If provided, don't return posts that
+              have these tags.
+          private (bool): By default (if False), private posts are not included.
+              If set to True, private posts will also be included.
         """
         posts = self.posts
 
