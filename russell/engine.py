@@ -156,6 +156,12 @@ class BlogEngine:
             posts = self.get_posts(num=num_posts, exclude_tags=None)
             self.jinja.globals["latest_posts"] = posts
 
+    def add_snippets(self, path="snippets"):
+        path = os.path.join(self.root_path, path)
+        for file in _listfiles(path):
+            filename = os.path.splitext(os.path.basename(file))[0].replace("-", "_")
+            self.jinja.globals.setdefault("snippets", {})[filename] = russell.content.render_markdown_from_file(file)
+
     def copy_assets(self, path="assets"):
         """
         Copy assets into the destination directory.

@@ -19,6 +19,11 @@ def render_markdown(text):
     return md.convert(text)
 
 
+def render_markdown_from_file(path):
+    with open(path, "rt") as fh:
+        return render_markdown(fh.read())
+
+
 def schema_url(url, https=False):
     """
     Convert schemaless URLs like //localhost to http:// or https:// URLs.
