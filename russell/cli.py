@@ -9,6 +9,7 @@ import os.path
 import re
 import shutil
 import subprocess
+import webbrowser
 
 import dateutil.tz
 import slugify
@@ -140,13 +141,16 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         return path
 
 
-def serve(dist_dir):
+def serve(dist_dir, open_browser=False):
     try:
         httpd = http.server.HTTPServer(
             ("127.0.0.1", 8000),
             functools.partial(CustomHTTPRequestHandler, directory=dist_dir),
         )
         sa = httpd.socket.getsockname()
+        if open_browser:
+            browser = webbrowser.get("chromium --kiosk --app=%s")
+            browser.open("http://%s:%s" % sa)
         print("Serving HTTP on http://%s:%s/ ..." % sa)
         httpd.serve_forever()
     except KeyboardInterrupt:
@@ -190,6 +194,9 @@ def get_parser():
     serve_parser.add_argument(
         "-d", "--dist-dir", default=os.path.join(os.getcwd(), "dist")
     )
+    serve_parser.add_argument(
+        "-o", "-b", "--open-browser", action="store_true", default=False
+    )
 
     return parser
 
@@ -232,7 +239,7 @@ def main(args=None):
     if args.command == "generate":
         return generate()
     if args.command == "serve":
-        return serve(os.path.join(os.getcwd(), "dist"))
+        return serve(os.path.join(os.getcwd(), "dist"), open_browser=args.open_browser)
 
 
 if __name__ == "__main__":
