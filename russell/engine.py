@@ -160,7 +160,8 @@ class BlogEngine:
         path = os.path.join(self.root_path, path)
         for file in _listfiles(path):
             filename = os.path.splitext(os.path.basename(file))[0].replace("-", "_")
-            self.jinja.globals.setdefault("snippets", {})[filename] = russell.content.render_markdown_from_file(file)
+            text = russell.content.render_markdown_from_file(file)
+            self.jinja.globals.setdefault("snippets", {})[filename] = text
 
     def copy_assets(self, path="assets"):
         """
